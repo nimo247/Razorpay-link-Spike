@@ -7,6 +7,8 @@ from pathlib import Path
 from fastapi import FastAPI, Header, HTTPException, Request
 from pydantic import BaseModel, Field, model_validator
 
+from .routes.promises import router as promises_router
+
 from .razorpay_client import (
     RazorpayError,
     WebhookLedger,
@@ -45,7 +47,7 @@ class PaymentLinkResponse(BaseModel):
 def create_app(database_path: str | Path | None = None) -> FastAPI:
     application = FastAPI(title="Promise-to-Pay Recovery Orchestrator", version="0.2.0")
     application.include_router(invoices_router)
-    
+    application.include_router(promises_router)
     event_ledger = WebhookLedger(
         database_path or Path(os.getenv("SPIKE_DATABASE_PATH", "spike.db"))
     )
