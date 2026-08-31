@@ -2,7 +2,14 @@ import hashlib
 import json
 import os
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    Header,
+    HTTPException,
+    Request,
+    status,
+)
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -10,36 +17,17 @@ from sqlalchemy.orm import Session
 from ..database import get_database_session
 from ..models import (
     Invoice,
-    InvoiceStatus,
     PaymentPromise,
-    PromiseStatus,
     WebhookEvent,
 )
 from ..razorpay_client import verify_webhook_signature
-from ..services.audit import add_audit_event
+from ..services.payment_application import (
+    apply_exact_payment,
+    move_to_human_review,
+)
 
 
 router = APIRouter(tags=["Webhooks"])
-
-
-def move_to_human_review(
-    session: Session,
-    *,
-    invoice: Invoice,
-    payment_promise: PaymentPromise,
-    event_type: str,
-    event_data: dict,
-) -> None:
-    invoice.status = InvoiceStatus.HUMAN_REVIEW
-    payment_promise.status = PromiseStatus.HUMAN_REVIEW
-
-    add_audit_event(
-        session,
-        invoice_id=invoice.id,
-        promise_id=payment_promise.id,
-        event_type=event_type,
-        event_data=event_data,
-    )
 
 
 @router.post("/webhooks/razorpay")
@@ -71,6 +59,7 @@ async def process_razorpay_webhook(
 
     try:
         payload = json.loads(raw_body)
+
     except json.JSONDecodeError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -129,7 +118,8 @@ async def process_razorpay_webhook(
     payment_promise = session.scalar(
         select(PaymentPromise)
         .where(
-            PaymentPromise.payment_link_id == payment_link_id
+            PaymentPromise.payment_link_id
+            == payment_link_id
         )
         .with_for_update()
     )
@@ -144,7 +134,9 @@ async def process_razorpay_webhook(
 
     invoice = session.scalar(
         select(Invoice)
-        .where(Invoice.id == payment_promise.invoice_id)
+        .where(
+            Invoice.id == payment_promise.invoice_id
+        )
         .with_for_update()
     )
 
@@ -164,7 +156,10 @@ async def process_razorpay_webhook(
                 payment_promise=payment_promise,
                 event_type="UNEXPECTED_PARTIAL_PAYMENT",
                 event_data={
-                    "razorpay_event_id": x_razorpay_event_id,
+                    "source": "WEBHOOK",
+                    "razorpay_event_id": (
+                        x_razorpay_event_id
+                    ),
                     "payment_link_id": payment_link_id,
                     "amount_paid": amount_paid,
                     "reason": (
@@ -182,131 +177,43 @@ async def process_razorpay_webhook(
                 "reason": "Unexpected partial payment",
             }
 
-        if payment_promise.status == PromiseStatus.PAID:
-            session.commit()
+        result = apply_exact_payment(
+            session,
+            invoice=invoice,
+            payment_promise=payment_promise,
+            payment_link_id=payment_link_id,
+            amount_paid=amount_paid,
+            source="WEBHOOK",
+            razorpay_event_id=x_razorpay_event_id,
+        )
 
+        session.commit()
+
+        if result["already_applied"]:
             return {
                 "accepted": True,
                 "already_applied": True,
                 "event_id": x_razorpay_event_id,
             }
 
-        if payment_promise.status != PromiseStatus.LINK_CREATED:
-            move_to_human_review(
-                session,
-                invoice=invoice,
-                payment_promise=payment_promise,
-                event_type="INVALID_PROMISE_STATE",
-                event_data={
-                    "razorpay_event_id": x_razorpay_event_id,
-                    "current_status": payment_promise.status.value,
-                },
-            )
-
-            session.commit()
-
+        if result["human_review"]:
             return {
                 "accepted": True,
                 "human_review": True,
-                "reason": "Invalid promise state",
+                "reason": result["reason"],
             }
-
-        expected_amount = (
-            payment_promise.promised_amount_paise
-        )
-
-        if (
-            not isinstance(amount_paid, int)
-            or amount_paid != expected_amount
-        ):
-            move_to_human_review(
-                session,
-                invoice=invoice,
-                payment_promise=payment_promise,
-                event_type="PAYMENT_AMOUNT_MISMATCH",
-                event_data={
-                    "razorpay_event_id": x_razorpay_event_id,
-                    "expected_amount_paise": expected_amount,
-                    "received_amount_paise": amount_paid,
-                },
-            )
-
-            session.commit()
-
-            return {
-                "accepted": True,
-                "human_review": True,
-                "reason": "Payment amount mismatch",
-            }
-
-        if amount_paid > invoice.outstanding_amount_paise:
-            move_to_human_review(
-                session,
-                invoice=invoice,
-                payment_promise=payment_promise,
-                event_type="PAYMENT_EXCEEDS_OUTSTANDING",
-                event_data={
-                    "razorpay_event_id": x_razorpay_event_id,
-                    "amount_paid_paise": amount_paid,
-                    "outstanding_amount_paise": (
-                        invoice.outstanding_amount_paise
-                    ),
-                },
-            )
-
-            session.commit()
-
-            return {
-                "accepted": True,
-                "human_review": True,
-                "reason": "Payment exceeds outstanding balance",
-            }
-
-        payment_promise.status = PromiseStatus.PAID
-
-        invoice.paid_amount_paise += amount_paid
-        invoice.outstanding_amount_paise = (
-            invoice.original_amount_paise
-            - invoice.paid_amount_paise
-        )
-
-        if invoice.outstanding_amount_paise == 0:
-            invoice.status = InvoiceStatus.PAID
-        elif invoice.disputed_amount_paise > 0:
-            invoice.status = InvoiceStatus.DISPUTED
-        else:
-            invoice.status = InvoiceStatus.PARTIALLY_PAID
-
-        add_audit_event(
-            session,
-            invoice_id=invoice.id,
-            promise_id=payment_promise.id,
-            event_type="PAYMENT_RECEIVED",
-            event_data={
-                "razorpay_event_id": x_razorpay_event_id,
-                "payment_link_id": payment_link_id,
-                "amount_paid_paise": amount_paid,
-                "invoice_paid_amount_paise": (
-                    invoice.paid_amount_paise
-                ),
-                "invoice_outstanding_amount_paise": (
-                    invoice.outstanding_amount_paise
-                ),
-                "invoice_status": invoice.status.value,
-            },
-        )
-
-        session.commit()
 
         return {
             "accepted": True,
             "duplicate": False,
             "event_id": x_razorpay_event_id,
-            "promise_status": payment_promise.status.value,
-            "invoice_status": invoice.status.value,
-            "amount_paid_paise": amount_paid,
+            "promise_status": result["promise_status"],
+            "invoice_status": result["invoice_status"],
+            "amount_paid_paise": (
+                result["amount_paid_paise"]
+            ),
             "outstanding_amount_paise": (
-                invoice.outstanding_amount_paise
+                result["outstanding_amount_paise"]
             ),
         }
 

@@ -3,8 +3,12 @@ import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from ..razorpay_client import RazorpayError, create_payment_link
-from ..schemas import PaymentLinkCreationResponse
+from ..razorpay_client import (
+    RazorpayError,
+    create_payment_link,
+    get_payment_link,
+)
+
 
 from ..contracts import ContractError, locate_exact_evidence
 from ..database import get_database_session
@@ -18,6 +22,10 @@ from ..schemas import (
     PaymentLinkCreationResponse,
     PaymentPromiseCreate,
     PaymentPromiseResponse,
+    PaymentReconciliationResponse,
+)
+from ..services.payment_application import (
+    apply_exact_payment,
 )
 from ..services.audit import add_audit_event
 
@@ -321,4 +329,171 @@ def generate_payment_link(
         payment_link_url=payment_promise.payment_link_url,
         amount_paise=payment_promise.promised_amount_paise,
         reused=False,
+    )
+
+@router.post(
+    "/promises/{promise_id}/reconcile",
+    response_model=PaymentReconciliationResponse,
+)
+def reconcile_payment_promise(
+    promise_id: str,
+    session: Session = Depends(get_database_session),
+) -> PaymentReconciliationResponse:
+    key_id = os.getenv("RAZORPAY_KEY_ID")
+    key_secret = os.getenv("RAZORPAY_KEY_SECRET")
+
+    if not key_id or not key_secret:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Razorpay test credentials are not configured",
+        )
+
+    # Read identifiers without locking rows during the network call.
+    promise_snapshot = session.get(
+        PaymentPromise,
+        promise_id,
+    )
+
+    if promise_snapshot is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Payment promise not found",
+        )
+
+    payment_link_id = promise_snapshot.payment_link_id
+
+    if not payment_link_id:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Payment promise has no Payment Link",
+        )
+
+    # End the read transaction before calling Razorpay.
+    session.rollback()
+
+    try:
+        external_link = get_payment_link(
+            key_id=key_id,
+            key_secret=key_secret,
+            payment_link_id=payment_link_id,
+        )
+
+    except (RazorpayError, ValueError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=str(error),
+        ) from error
+
+    external_link_id = external_link.get("id")
+    external_status = external_link.get("status")
+    amount_paid = external_link.get("amount_paid")
+
+    if external_link_id != payment_link_id:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=(
+                "Razorpay returned an unexpected "
+                "Payment Link ID"
+            ),
+        )
+
+    if not isinstance(external_status, str):
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Razorpay returned an invalid link status",
+        )
+
+    if external_status != "paid":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "Razorpay Payment Link is not paid; "
+                f"current status is {external_status}"
+            ),
+        )
+
+    payment_promise = session.scalar(
+        select(PaymentPromise)
+        .where(PaymentPromise.id == promise_id)
+        .with_for_update()
+    )
+
+    if payment_promise is None:
+        session.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Payment promise no longer exists",
+        )
+
+    if payment_promise.payment_link_id != payment_link_id:
+        session.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Payment Link changed during reconciliation",
+        )
+
+    invoice = session.scalar(
+        select(Invoice)
+        .where(
+            Invoice.id == payment_promise.invoice_id
+        )
+        .with_for_update()
+    )
+
+    if invoice is None:
+        session.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Associated invoice was not found",
+        )
+
+    try:
+        result = apply_exact_payment(
+            session,
+            invoice=invoice,
+            payment_promise=payment_promise,
+            payment_link_id=payment_link_id,
+            amount_paid=amount_paid,
+            source="RAZORPAY_RECONCILIATION",
+        )
+
+        session.commit()
+
+    except Exception:
+        session.rollback()
+        raise
+
+    response_amount = (
+        amount_paid
+        if type(amount_paid) is int
+        else None
+    )
+
+    return PaymentReconciliationResponse(
+        promise_id=payment_promise.id,
+        invoice_id=invoice.id,
+        payment_link_id=payment_link_id,
+        external_status=external_status,
+        reconciled=(
+            not result["already_applied"]
+            and not result["human_review"]
+        ),
+        already_applied=bool(
+            result["already_applied"]
+        ),
+        human_review=bool(result["human_review"]),
+        reason=(
+            str(result["reason"])
+            if result["reason"] is not None
+            else None
+        ),
+        promise_status=result["promise_status"],
+        invoice_status=result["invoice_status"],
+        amount_paid_paise=response_amount,
+        outstanding_amount_paise=int(
+            result["outstanding_amount_paise"]
+        ),
     )

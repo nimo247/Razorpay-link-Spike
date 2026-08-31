@@ -18,7 +18,209 @@ from app.models import (
     PromiseStatus,
     WebhookEvent,
 )
-from app.razorpay_client import expected_webhook_signature
+from app.razorpay_client import (
+    RazorpayError,
+    expected_webhook_signature,
+)
+def test_reconciliation_applies_paid_link_once(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(
+        client,
+        invoice_id,
+    )
+
+    link_response, _ = create_mock_payment_link(
+        client,
+        promise_id,
+    )
+
+    assert link_response.status_code == 200
+
+    external_link = {
+        "id": "plink_test_exact",
+        "status": "paid",
+        "amount": 4_000_000,
+        "amount_paid": 4_000_000,
+    }
+
+    with patch(
+        "app.routes.promises.get_payment_link"
+    ) as mocked_get:
+        mocked_get.return_value = external_link
+
+        first = client.post(
+            f"/promises/{promise_id}/reconcile"
+        )
+
+        second = client.post(
+            f"/promises/{promise_id}/reconcile"
+        )
+
+    assert first.status_code == 200
+    assert first.json()["reconciled"] is True
+    assert first.json()["already_applied"] is False
+    assert first.json()["promise_status"] == "PAID"
+    assert first.json()["outstanding_amount_paise"] == 800_000
+
+    assert second.status_code == 200
+    assert second.json()["reconciled"] is False
+    assert second.json()["already_applied"] is True
+
+    with TestingSession() as session:
+        invoice = session.get(Invoice, invoice_id)
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+        reconciliation_events = session.scalar(
+            select(func.count())
+            .select_from(AuditEvent)
+            .where(
+                AuditEvent.promise_id == promise_id,
+                AuditEvent.event_type
+                == "PAYMENT_RECONCILED",
+            )
+        )
+    assert invoice is not None
+    assert payment_promise is not None
+    assert invoice.paid_amount_paise == 4_000_000
+    assert invoice.outstanding_amount_paise == 800_000
+    assert payment_promise.status == PromiseStatus.PAID
+    assert reconciliation_events == 1
+
+
+def test_reconciliation_rejects_unpaid_link(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(
+        client,
+        invoice_id,
+    )
+
+    create_mock_payment_link(client, promise_id)
+
+    with patch(
+        "app.routes.promises.get_payment_link"
+    ) as mocked_get:
+        mocked_get.return_value = {
+            "id": "plink_test_exact",
+            "status": "created",
+            "amount": 4_000_000,
+            "amount_paid": 0,
+        }
+
+        response = client.post(
+            f"/promises/{promise_id}/reconcile"
+        )
+
+    assert response.status_code == 409
+    assert "not paid" in response.json()["detail"]
+
+    with TestingSession() as session:
+        invoice = session.get(Invoice, invoice_id)
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+    assert invoice is not None
+    assert payment_promise is not None
+    assert invoice.paid_amount_paise == 0
+    assert payment_promise.status == PromiseStatus.LINK_CREATED
+
+
+def test_reconciliation_amount_mismatch_moves_to_review(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(
+        client,
+        invoice_id,
+    )
+
+    create_mock_payment_link(client, promise_id)
+
+    with patch(
+        "app.routes.promises.get_payment_link"
+    ) as mocked_get:
+        mocked_get.return_value = {
+            "id": "plink_test_exact",
+            "status": "paid",
+            "amount": 4_000_000,
+            "amount_paid": 3_900_000,
+        }
+
+        response = client.post(
+            f"/promises/{promise_id}/reconcile"
+        )
+
+    assert response.status_code == 200
+    assert response.json()["reconciled"] is False
+    assert response.json()["human_review"] is True
+    assert response.json()["reason"] == (
+        "Payment amount mismatch"
+    )
+
+    with TestingSession() as session:
+        invoice = session.get(Invoice, invoice_id)
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+    assert invoice is not None
+    assert payment_promise is not None
+    assert invoice.paid_amount_paise == 0
+    assert invoice.status == InvoiceStatus.HUMAN_REVIEW
+    assert payment_promise.status == PromiseStatus.HUMAN_REVIEW
+
+
+def test_reconciliation_handles_razorpay_failure(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(
+        client,
+        invoice_id,
+    )
+
+    create_mock_payment_link(client, promise_id)
+
+    with patch(
+        "app.routes.promises.get_payment_link",
+        side_effect=RazorpayError(
+            "Razorpay temporarily unavailable"
+        ),
+    ):
+        response = client.post(
+            f"/promises/{promise_id}/reconcile"
+        )
+
+    assert response.status_code == 502
+
+    with TestingSession() as session:
+        invoice = session.get(Invoice, invoice_id)
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+    assert invoice is not None
+    assert payment_promise is not None
+    assert invoice.paid_amount_paise == 0
+    assert payment_promise.status == PromiseStatus.LINK_CREATED
 
 
 @pytest.fixture()

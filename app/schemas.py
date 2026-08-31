@@ -2,8 +2,6 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from .models import InvoiceStatus
-
 from .models import InvoiceStatus, PromiseStatus
 
 
@@ -134,3 +132,20 @@ class ExtractionPreviewResponse(BaseModel):
     resolved_promised_date: date | None
     validation_errors: list[str]
     evidence_spans: list[EvidenceSpanResponse]
+
+
+class PaymentReconciliationResponse(BaseModel):
+    promise_id: str
+    invoice_id: str
+    payment_link_id: str
+    external_status: str
+
+    reconciled: bool
+    already_applied: bool
+    human_review: bool
+    reason: str | None
+
+    promise_status: PromiseStatus
+    invoice_status: InvoiceStatus
+    amount_paid_paise: int | None
+    outstanding_amount_paise: int
