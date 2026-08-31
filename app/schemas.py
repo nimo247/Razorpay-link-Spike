@@ -92,3 +92,45 @@ class PaymentLinkCreationResponse(BaseModel):
     payment_link_url: str
     amount_paise: int
     reused: bool
+
+class CustomerReplyRequest(BaseModel):
+    customer_message: str = Field(
+        min_length=1,
+        max_length=2000,
+    )
+
+    message_timestamp: datetime
+
+    @field_validator("message_timestamp")
+    @classmethod
+    def require_timezone(
+        cls,
+        value: datetime,
+    ) -> datetime:
+        if value.tzinfo is None:
+            raise ValueError(
+                "message_timestamp must include a timezone"
+            )
+
+        return value
+
+
+class EvidenceSpanResponse(BaseModel):
+    quote: str
+    start: int
+    end: int
+
+
+class ExtractionPreviewResponse(BaseModel):
+    intent: str
+    promised_amount_paise: int | None
+    disputed_amount_paise: int
+    promised_date_text: str | None
+    evidence_quotes: list[str]
+    needs_review: bool
+    review_reason: str | None
+
+    ready_for_validation: bool
+    resolved_promised_date: date | None
+    validation_errors: list[str]
+    evidence_spans: list[EvidenceSpanResponse]
