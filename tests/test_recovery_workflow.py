@@ -18,6 +18,9 @@ from app.models import (
     PromiseStatus,
     WebhookEvent,
 )
+from app.services.deadline_worker import (
+    current_business_date,
+)
 from app.razorpay_client import (
     RazorpayError,
     expected_webhook_signature,
@@ -650,3 +653,230 @@ def test_unexpected_partial_event_moves_to_review(
         payment_promise.status
         == PromiseStatus.HUMAN_REVIEW
     )
+
+def test_deadline_worker_marks_overdue_link_broken_once(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(
+        client,
+        invoice_id,
+    )
+
+    create_mock_payment_link(client, promise_id)
+
+    with TestingSession() as session:
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+        assert payment_promise is not None
+
+        payment_promise.promised_date = (
+            current_business_date()
+            - timedelta(days=1)
+        )
+
+        session.commit()
+
+    first = client.post(
+        "/jobs/mark-broken-promises"
+    )
+
+    second = client.post(
+        "/jobs/mark-broken-promises"
+    )
+
+    assert first.status_code == 200
+    assert first.json()["broken_count"] == 1
+    assert first.json()["broken_promise_ids"] == [
+        promise_id
+    ]
+
+    assert second.status_code == 200
+    assert second.json()["broken_count"] == 0
+
+    with TestingSession() as session:
+        invoice = session.get(Invoice, invoice_id)
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+        broken_event_count = session.scalar(
+            select(func.count())
+            .select_from(AuditEvent)
+            .where(
+                AuditEvent.promise_id == promise_id,
+                AuditEvent.event_type == "PROMISE_BROKEN",
+            )
+        )
+
+    assert invoice is not None
+    assert payment_promise is not None
+    assert payment_promise.status == PromiseStatus.BROKEN
+    assert invoice.status == InvoiceStatus.DISPUTED
+    assert broken_event_count == 1
+
+
+def test_deadline_worker_does_not_break_due_today(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(
+        client,
+        invoice_id,
+    )
+
+    with TestingSession() as session:
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+        assert payment_promise is not None
+
+        payment_promise.promised_date = (
+            current_business_date()
+        )
+
+        session.commit()
+
+    response = client.post(
+        "/jobs/mark-broken-promises"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["broken_count"] == 0
+
+    with TestingSession() as session:
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+    assert payment_promise is not None
+    assert payment_promise.status == PromiseStatus.VALIDATED
+
+
+def test_deadline_worker_never_breaks_paid_promise(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(
+        client,
+        invoice_id,
+    )
+
+    create_mock_payment_link(client, promise_id)
+
+    paid_response = send_webhook(
+        client,
+        event_id="event_paid_before_deadline_sweep",
+        event_type="payment_link.paid",
+        amount_paid=4_000_000,
+    )
+
+    assert paid_response.status_code == 200
+
+    with TestingSession() as session:
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+        assert payment_promise is not None
+
+        payment_promise.promised_date = (
+            current_business_date()
+            - timedelta(days=1)
+        )
+
+        session.commit()
+
+    response = client.post(
+        "/jobs/mark-broken-promises"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["broken_count"] == 0
+
+    with TestingSession() as session:
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+    assert payment_promise is not None
+    assert payment_promise.status == PromiseStatus.PAID
+
+
+def test_broken_undisputed_promise_makes_invoice_overdue(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+
+    promise_response = client.post(
+        f"/invoices/{invoice_id}/promises",
+        json={
+            "customer_message": (
+                "I will pay the full 48k Friday."
+            ),
+            "promised_amount_paise": 4_800_000,
+            "disputed_amount_paise": 0,
+            "promised_date": (
+                current_business_date()
+                + timedelta(days=4)
+            ).isoformat(),
+            "evidence_quotes": [
+                "48k",
+                "Friday",
+            ],
+        },
+    )
+
+    assert promise_response.status_code == 201
+    promise_id = promise_response.json()["id"]
+
+    with TestingSession() as session:
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+        assert payment_promise is not None
+
+        payment_promise.promised_date = (
+            current_business_date()
+            - timedelta(days=1)
+        )
+
+        session.commit()
+
+    response = client.post(
+        "/jobs/mark-broken-promises"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["broken_count"] == 1
+
+    with TestingSession() as session:
+        invoice = session.get(Invoice, invoice_id)
+        payment_promise = session.get(
+            PaymentPromise,
+            promise_id,
+        )
+
+    assert invoice is not None
+    assert payment_promise is not None
+    assert invoice.status == InvoiceStatus.OVERDUE
+    assert payment_promise.status == PromiseStatus.BROKEN

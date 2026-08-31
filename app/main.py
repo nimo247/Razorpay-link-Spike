@@ -4,6 +4,7 @@ from .routes.invoices import router as invoices_router
 from .routes.promises import router as promises_router
 from .routes.webhooks import router as webhooks_router
 from .routes.extraction import router as extraction_router
+from .routes.jobs import router as jobs_router
 
 
 def create_app(*args, **kwargs) -> FastAPI:
@@ -16,6 +17,7 @@ def create_app(*args, **kwargs) -> FastAPI:
     application.include_router(promises_router)
     application.include_router(webhooks_router)
     application.include_router(extraction_router)
+    application.include_router(jobs_router)
 
     @application.get("/health")
     def health() -> dict[str, bool]:

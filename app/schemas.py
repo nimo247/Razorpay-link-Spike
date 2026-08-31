@@ -149,3 +149,8 @@ class PaymentReconciliationResponse(BaseModel):
     invoice_status: InvoiceStatus
     amount_paid_paise: int | None
     outstanding_amount_paise: int
+
+class BrokenPromiseSweepResponse(BaseModel):
+    as_of: date
+    broken_count: int
+    broken_promise_ids: list[str]
