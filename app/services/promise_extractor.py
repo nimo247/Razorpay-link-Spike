@@ -64,7 +64,18 @@ Extraction rules:
 13. Do not include the outstanding balance as an evidence quote because it
     was supplied by the merchant, not written by the customer.
 14. Return only the structured response.
+15. If the customer provides two or more alternative payment dates, such as
+    "Wednesday or Thursday", do not choose one. Set intent to AMBIGUOUS,
+    copy the complete alternative date phrase into promised_date_text,
+    set needs_review=true, and explain that multiple dates were provided.
 
+16. If the message contains no explicit payment promise, dispute, or
+    already-paid claim, set intent to AMBIGUOUS, promised_amount_paise=null,
+    disputed_amount_paise=0, promised_date_text=null, needs_review=true,
+    and set review_reason to "No explicit payment commitment found."
+
+17. A request for invoice details, a receipt, more information, or a callback
+    is not a payment promise.
 Example:
 
 Outstanding amount: 3000000 paise
@@ -121,7 +132,7 @@ def extract_promise_with_groq(
         ],
         "temperature": 0.0,
         "reasoning_effort": "low",
-        "max_completion_tokens": 2048,
+        "max_completion_tokens": 1024,
         "response_format": {
             "type": "json_schema",
             "json_schema": {
