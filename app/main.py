@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from .routes.invoices import router as invoices_router
 import json
 import os
 from pathlib import Path
@@ -43,7 +43,9 @@ class PaymentLinkResponse(BaseModel):
 
 
 def create_app(database_path: str | Path | None = None) -> FastAPI:
-    application = FastAPI(title="Razorpay Payment Link Spike", version="0.2.0")
+    application = FastAPI(title="Promise-to-Pay Recovery Orchestrator", version="0.2.0")
+    application.include_router(invoices_router)
+    
     event_ledger = WebhookLedger(
         database_path or Path(os.getenv("SPIKE_DATABASE_PATH", "spike.db"))
     )
