@@ -82,3 +82,13 @@ class PaymentPromiseResponse(BaseModel):
     payment_link_url: str | None
     created_at: datetime
     updated_at: datetime
+
+
+class PaymentLinkCreationResponse(BaseModel):
+    promise_id: str
+    invoice_id: str
+    promise_status: PromiseStatus
+    payment_link_id: str
+    payment_link_url: str
+    amount_paise: int
+    reused: bool
