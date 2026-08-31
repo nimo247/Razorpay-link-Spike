@@ -1,5 +1,6 @@
 .env
-.env.*
-!.env.example
-
-*.db
+.venv/
+spike.db
+__pycache__/
+*.pyc
+.pytest_cache/
