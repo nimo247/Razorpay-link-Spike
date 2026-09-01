@@ -156,23 +156,23 @@ function App() {
     setWorkspace(result);
   }
   async function handleRefreshData() {
-  try {
-    setError(null);
+    try {
+      setError(null);
 
-    await Promise.all([
-      loadInvoices(),
-      selectedInvoiceId
-        ? refreshWorkspace(selectedInvoiceId)
-        : Promise.resolve(),
-    ]);
-  } catch (requestError) {
-    setError(
-      requestError instanceof Error
-        ? requestError.message
-        : "Could not refresh dashboard data",
-    );
+      await Promise.all([
+        loadInvoices(),
+        selectedInvoiceId
+          ? refreshWorkspace(selectedInvoiceId)
+          : Promise.resolve(),
+      ]);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Could not refresh dashboard data",
+      );
+    }
   }
-}
 
   async function handleExtractPromise() {
     if (!selectedInvoiceId || !customerMessage.trim()) {
@@ -304,10 +304,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-
-    if (selectedInvoiceId === null){
+    if (selectedInvoiceId === null) {
       return;
     }
+
     const invoiceId = selectedInvoiceId;
     let active = true;
 
@@ -316,9 +316,7 @@ function App() {
         setLoadingWorkspace(true);
         setError(null);
 
-        const result = await getInvoiceWorkspace(
-          invoiceId,
-        );
+        const result = await getInvoiceWorkspace(invoiceId);
 
         if (active) {
           setWorkspace(result);
@@ -337,13 +335,52 @@ function App() {
         }
       }
     }
-
     void loadWorkspace();
 
     return () => {
       active = false;
     };
   }, [selectedInvoiceId]);
+
+  useEffect(() => {
+    if (
+      selectedInvoiceId === null ||
+      workspace?.promise?.status !== "LINK_CREATED"
+    ) {
+      return;
+    }
+
+    const invoiceId: string = selectedInvoiceId;
+    let active = true;
+
+    async function pollPaymentStatus() {
+      try {
+        const [updatedWorkspace, updatedInvoices] =
+          await Promise.all([
+            getInvoiceWorkspace(invoiceId),
+            getInvoices(),
+          ]);
+
+        if (!active) {
+          return;
+        }
+
+        setWorkspace(updatedWorkspace);
+        setInvoices(updatedInvoices);
+      } catch {
+        // Manual refresh remains available if polling fails.
+      }
+    }
+
+    const intervalId = window.setInterval(() => {
+      void pollPaymentStatus();
+    }, 5000);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, [selectedInvoiceId, workspace?.promise?.status]);
 
   const totals = useMemo(() => {
     return invoices.reduce(
@@ -898,6 +935,13 @@ function App() {
                             : "Create Razorpay Payment Link"}
                         </button>
                       )}
+
+                      {workspace.promise.status === "LINK_CREATED" && (
+  <span className="sync-note">
+    <span className="sync-dot" />
+    Checking payment status every 5 seconds
+  </span>
+)}
 
                       {workspace.promise
                         .payment_link_url && (
