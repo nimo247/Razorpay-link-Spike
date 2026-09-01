@@ -1,0 +1,155 @@
+{
+  "summary": {
+    "generated_at": "2026-08-31T20:22:23.426554+00:00",
+    "total_scenarios": 16,
+    "passed_scenarios": 16,
+    "failed_or_missing_scenarios": 0,
+    "safety_control_pass_rate": 1.0
+  },
+  "results": [
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_ungrounded_evidence_is_rejected",
+      "category": "Evidence",
+      "control": "Reject fabricated evidence",
+      "expected": "Ungrounded evidence cannot create a promise",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.045
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_amount_exceeding_balance_is_rejected",
+      "category": "Financial guardrail",
+      "control": "Bound commitments by balance",
+      "expected": "Promise plus dispute cannot exceed outstanding balance",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.064
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_repeated_link_request_reuses_existing_link",
+      "category": "Idempotency",
+      "control": "Prevent duplicate Payment Links",
+      "expected": "Repeated requests reuse the existing link",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.045
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_paid_webhook_updates_workflow_once",
+      "category": "Webhook",
+      "control": "Apply successful payment once",
+      "expected": "Webhook replay cannot double-count payment",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.058
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_payment_amount_mismatch_moves_to_review",
+      "category": "Financial guardrail",
+      "control": "Reject mismatched payment amount",
+      "expected": "Mismatch routes invoice and promise to human review",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.069
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_unexpected_partial_event_moves_to_review",
+      "category": "Financial guardrail",
+      "control": "Reject unexpected partial payment",
+      "expected": "Partial event on exact-amount link triggers review",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.066
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_reconciliation_applies_paid_link_once",
+      "category": "Reconciliation",
+      "control": "Repair missed webhook safely",
+      "expected": "Paid Razorpay link is reconciled exactly once",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.078
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_reconciliation_rejects_unpaid_link",
+      "category": "Reconciliation",
+      "control": "Verify external payment status",
+      "expected": "Unpaid external links cannot alter local balances",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.048
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_reconciliation_amount_mismatch_moves_to_review",
+      "category": "Reconciliation",
+      "control": "Validate reconciled amount",
+      "expected": "Reconciliation mismatch triggers human review",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.045
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_reconciliation_handles_razorpay_failure",
+      "category": "Reconciliation",
+      "control": "Preserve state during provider failure",
+      "expected": "Razorpay failure does not modify financial state",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.041
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_deadline_worker_marks_overdue_link_broken_once",
+      "category": "Deadline worker",
+      "control": "Mark overdue promises idempotently",
+      "expected": "Expired unpaid promise becomes broken exactly once",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.062
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_deadline_worker_does_not_break_due_today",
+      "category": "Deadline worker",
+      "control": "Respect the full promise date",
+      "expected": "Promise due today remains active",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.052
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_deadline_worker_never_breaks_paid_promise",
+      "category": "Deadline worker",
+      "control": "Protect completed payments",
+      "expected": "Paid promise can never be marked broken",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.057
+    },
+    {
+      "node_id": "tests/test_recovery_workflow.py::test_broken_undisputed_promise_makes_invoice_overdue",
+      "category": "Deadline worker",
+      "control": "Maintain correct invoice state",
+      "expected": "Broken undisputed promise returns invoice to overdue",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.038
+    },
+    {
+      "node_id": "tests/test_razorpay_client.py::WebhookTests::test_signature_uses_raw_body",
+      "category": "Webhook security",
+      "control": "Verify the exact raw payload",
+      "expected": "Payload modification invalidates its signature",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.001
+    },
+    {
+      "node_id": "tests/test_razorpay_client.py::WebhookTests::test_duplicate_event_id_is_recorded_once",
+      "category": "Webhook security",
+      "control": "Reject replayed event IDs",
+      "expected": "Duplicate webhook event ID is recorded once",
+      "status": "PASSED",
+      "detail": null,
+      "duration_seconds": 0.003
+    }
+  ]
+}

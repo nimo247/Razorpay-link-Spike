@@ -159,6 +159,14 @@ Repeated execution is idempotent, and completed payments cannot be marked broken
 - Frozen adversarial extraction cases
 - Frozen workflow-safety scenarios
 
+## Live integration evidence
+
+A real Razorpay Test Mode `payment_link.paid` webhook has been verified against the current PostgreSQL-backed application.
+
+The resulting promise, invoice, and audit transitions are documented in [docs/live-validation.md](docs/live-validation.md).
+
+The normal product flow uses exact-amount Payment Links. Current-app handling of an unexpected partial-payment event is synthetically tested but not claimed as live-verified.
+
 ## Repository structure
 
 ```text
@@ -434,3 +442,4 @@ The evaluation focuses on whether the system:
 - Handles a failed webhook or provider request safely.
 
 The reported metrics describe only the checked frozen scenarios.
+

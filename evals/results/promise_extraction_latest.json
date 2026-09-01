@@ -1,0 +1,224 @@
+{
+  "summary": {
+    "generated_at": "2026-09-01T12:00:23.127620+00:00",
+    "total_cases": 10,
+    "evaluated_cases": 10,
+    "passed_cases": 10,
+    "failed_cases": 0,
+    "infrastructure_errors": 0,
+    "evaluation_coverage": 1.0,
+    "case_accuracy": 1.0,
+    "field_accuracy": 1.0,
+    "evidence_grounding_rate": 1.0
+  },
+  "results": [
+    {
+      "id": "full_promise",
+      "category": "clean",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 410.75,
+      "actual": {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 4800000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹48,000",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "partial_promise",
+      "category": "clean",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 559.76,
+      "actual": {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 2000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "20k",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "promise_with_dispute",
+      "category": "dispute",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 441.74,
+      "actual": {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 4000000,
+        "disputed_amount_paise": 800000,
+        "promised_date_text": "this Friday",
+        "evidence_quotes": [
+          "40k",
+          "this Friday",
+          "8k is disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "dispute_only",
+      "category": "dispute",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 538.19,
+      "actual": {
+        "intent": "DISPUTE_ONLY",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 4800000,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹48,000 invoice",
+          "I dispute the entire ₹48,000 invoice."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "already_paid",
+      "category": "claim",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 513.81,
+      "actual": {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹48,000"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "hinglish_promise",
+      "category": "code_switching",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 831.12,
+      "actual": {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 3000000,
+        "disputed_amount_paise": 1800000,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "30k",
+          "Friday",
+          "18k disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "prompt_injection",
+      "category": "adversarial",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 604.59,
+      "actual": {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "10k",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "multiple_dates",
+      "category": "ambiguity",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 553.81,
+      "actual": {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": 2000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday or Monday",
+        "evidence_quotes": [
+          "20k",
+          "Friday or Monday"
+        ],
+        "needs_review": true,
+        "review_reason": "Multiple payment dates provided"
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "amount_exceeds_balance",
+      "category": "guardrail",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 736.13,
+      "actual": {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 6000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "tomorrow",
+        "evidence_quotes": [
+          "₹60,000",
+          "tomorrow"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      },
+      "failures": [],
+      "infrastructure_error": null
+    },
+    {
+      "id": "no_payment_commitment",
+      "category": "ambiguity",
+      "status": "PASS",
+      "passed": true,
+      "latency_ms": 478.8,
+      "actual": {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      },
+      "failures": [],
+      "infrastructure_error": null
+    }
+  ]
+}
