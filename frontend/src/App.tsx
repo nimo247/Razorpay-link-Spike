@@ -23,6 +23,18 @@ const statusLabels: Record<InvoiceStatus, string> = {
   PAID: "Paid",
   HUMAN_REVIEW: "Human review",
 };
+const auditEventPriority: Record<string, number> = {
+  INVOICE_CREATED: 10,
+  PROMISE_PROPOSED: 20,
+  PROMISE_VALIDATED: 30,
+  PAYMENT_LINK_CREATED: 40,
+  PAYMENT_RECEIVED: 50,
+  PROMISE_BROKEN: 60,
+  UNEXPECTED_PARTIAL_PAYMENT: 70,
+  PAYMENT_AMOUNT_MISMATCH: 70,
+  PAYMENT_EXCEEDS_OUTSTANDING: 70,
+  INVALID_PROMISE_STATE: 70,
+};
 
 function formatMoney(amountPaise: number): string {
   return new Intl.NumberFormat("en-IN", {
@@ -82,6 +94,29 @@ function eventSummary(event: AuditEvent): string {
   }
 
   return "Recorded in audit ledger";
+}
+function orderAuditEvents(
+  events: AuditEvent[],
+): AuditEvent[] {
+  return [...events].sort((left, right) => {
+    const timestampDifference =
+      Date.parse(left.created_at) -
+      Date.parse(right.created_at);
+
+    if (timestampDifference !== 0) {
+      return timestampDifference;
+    }
+
+    const priorityDifference =
+      (auditEventPriority[left.event_type] ?? 100) -
+      (auditEventPriority[right.event_type] ?? 100);
+
+    if (priorityDifference !== 0) {
+      return priorityDifference;
+    }
+
+    return left.id.localeCompare(right.id);
+  });
 }
 
 function App() {
@@ -980,7 +1015,8 @@ function App() {
                   </div>
 
                   <ol className="timeline">
-                    {workspace.audit_events.map((event) => (
+                    {orderAuditEvents(workspace.audit_events).map(
+                     (event) => (
                       <li key={event.id}>
                         <span className="timeline-marker" />
 
