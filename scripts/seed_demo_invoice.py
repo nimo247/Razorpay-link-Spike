@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 from datetime import date, timedelta
@@ -58,24 +59,30 @@ def api_request(
         ) from error
 
 
+def invoice_is_clean(invoice: dict[str, Any]) -> bool:
+    if (
+        invoice["customer_name"] != DEMO_CUSTOMER
+        or invoice["status"] != "OVERDUE"
+        or invoice["paid_amount_paise"] != 0
+        or invoice["disputed_amount_paise"] != 0
+        or invoice["outstanding_amount_paise"]
+        != invoice["original_amount_paise"]
+    ):
+        return False
+
+    workspace = api_request(
+        "GET",
+        f"/invoices/{invoice['id']}/workspace",
+    )
+
+    return workspace["promise"] is None
+
+
 def find_reusable_invoice() -> dict[str, Any] | None:
     invoices = api_request("GET", "/invoices")
 
     for invoice in invoices:
-        if (
-            invoice["customer_name"] != DEMO_CUSTOMER
-            or invoice["status"] != "OVERDUE"
-            or invoice["paid_amount_paise"] != 0
-            or invoice["disputed_amount_paise"] != 0
-        ):
-            continue
-
-        workspace = api_request(
-            "GET",
-            f"/invoices/{invoice['id']}/workspace",
-        )
-
-        if workspace["promise"] is None:
+        if invoice_is_clean(invoice):
             return invoice
 
     return None
@@ -95,19 +102,51 @@ def create_demo_invoice() -> dict[str, Any]:
     )
 
 
-def main() -> None:
-    invoice = find_reusable_invoice()
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Prepare a clean invoice for the recovery demo."
+        )
+    )
 
-    if invoice is None:
+    parser.add_argument(
+        "--fresh",
+        action="store_true",
+        help=(
+            "Always create a new invoice instead of reusing "
+            "an existing clean invoice."
+        ),
+    )
+
+    return parser.parse_args()
+
+
+def main() -> None:
+    arguments = parse_arguments()
+
+    if arguments.fresh:
         invoice = create_demo_invoice()
-        action = "Created"
+        action = "Created fresh"
     else:
-        action = "Reused"
+        invoice = find_reusable_invoice()
+
+        if invoice is None:
+            invoice = create_demo_invoice()
+            action = "Created"
+        else:
+            action = "Reused"
+
+    if not invoice_is_clean(invoice):
+        raise RuntimeError(
+            "The selected demo invoice is not in a clean state"
+        )
 
     print(f"{action} clean demo invoice")
     print(f"Invoice ID: {invoice['id']}")
     print(f"Customer: {invoice['customer_name']}")
+    print("Status: OVERDUE")
     print("Amount: INR 48,000")
+    print("Existing promise: none")
     print(f"Customer reply: {DEMO_MESSAGE}")
 
 
