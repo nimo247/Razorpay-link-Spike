@@ -167,3 +167,107 @@ def test_missing_invoice_returns_404() -> None:
     )
 
     assert response.status_code == 404
+
+def test_list_invoices_contains_created_invoice() -> None:
+    client = build_client()
+
+    created = client.post(
+        "/invoices",
+        json={
+            "customer_name": "Dashboard Merchant",
+            "original_amount_paise": 4_800_000,
+            "due_date": (
+                date.today() - timedelta(days=10)
+            ).isoformat(),
+        },
+    )
+
+    assert created.status_code == 201
+    invoice_id = created.json()["id"]
+
+    response = client.get("/invoices")
+
+    assert response.status_code == 200
+
+    invoices = response.json()
+
+    assert isinstance(invoices, list)
+
+    matching_invoice = next(
+        invoice
+        for invoice in invoices
+        if invoice["id"] == invoice_id
+    )
+
+    assert matching_invoice["customer_name"] == "Dashboard Merchant"
+    assert matching_invoice["status"] == "OVERDUE"
+
+
+def test_invoice_workspace_returns_promise_and_audit_trail() -> None:
+    client = build_client()
+
+    created_invoice = client.post(
+        "/invoices",
+        json={
+            "customer_name": "Workspace Merchant",
+            "original_amount_paise": 4_800_000,
+            "due_date": (
+                date.today() - timedelta(days=10)
+            ).isoformat(),
+        },
+    )
+
+    assert created_invoice.status_code == 201
+    invoice_id = created_invoice.json()["id"]
+
+    created_promise = client.post(
+        f"/invoices/{invoice_id}/promises",
+        json={
+            "customer_message": (
+                "I can pay 40k this Friday. "
+                "The other 8k is disputed."
+            ),
+            "promised_amount_paise": 4_000_000,
+            "disputed_amount_paise": 800_000,
+            "promised_date": (
+                date.today() + timedelta(days=7)
+            ).isoformat(),
+            "evidence_quotes": [
+                "40k",
+                "this Friday",
+                "8k is disputed",
+            ],
+        },
+    )
+
+    assert created_promise.status_code == 201
+    promise_id = created_promise.json()["id"]
+
+    response = client.get(
+        f"/invoices/{invoice_id}/workspace"
+    )
+
+    assert response.status_code == 200
+
+    workspace = response.json()
+
+    assert workspace["invoice"]["id"] == invoice_id
+    assert workspace["invoice"]["status"] == "DISPUTED"
+    assert workspace["promise"]["id"] == promise_id
+    assert workspace["promise"]["status"] == "VALIDATED"
+
+    event_types = [
+        event["event_type"]
+        for event in workspace["audit_events"]
+    ]
+
+    assert "INVOICE_CREATED" in event_types
+    assert "PROMISE_PROPOSED" in event_types
+    assert "PROMISE_VALIDATED" in event_types
+
+    timestamps = [
+        event["created_at"]
+        for event in workspace["audit_events"]
+    ]
+
+    assert timestamps == sorted(timestamps)

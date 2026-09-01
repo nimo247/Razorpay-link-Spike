@@ -4,6 +4,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .models import InvoiceStatus, PromiseStatus
 
+from typing import Any
+
 
 class InvoiceCreate(BaseModel):
     customer_name: str = Field(min_length=1, max_length=200)
@@ -154,3 +156,19 @@ class BrokenPromiseSweepResponse(BaseModel):
     as_of: date
     broken_count: int
     broken_promise_ids: list[str]
+
+class AuditEventResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    invoice_id: str
+    promise_id: str | None
+    event_type: str
+    event_data: dict[str, Any]
+    created_at: datetime
+
+
+class InvoiceWorkspaceResponse(BaseModel):
+    invoice: InvoiceResponse
+    promise: PaymentPromiseResponse | None
+    audit_events: list[AuditEventResponse]
