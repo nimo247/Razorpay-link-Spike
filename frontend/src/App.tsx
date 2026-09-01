@@ -155,6 +155,24 @@ function App() {
     const result = await getInvoiceWorkspace(invoiceId);
     setWorkspace(result);
   }
+  async function handleRefreshData() {
+  try {
+    setError(null);
+
+    await Promise.all([
+      loadInvoices(),
+      selectedInvoiceId
+        ? refreshWorkspace(selectedInvoiceId)
+        : Promise.resolve(),
+    ]);
+  } catch (requestError) {
+    setError(
+      requestError instanceof Error
+        ? requestError.message
+        : "Could not refresh dashboard data",
+    );
+  }
+}
 
   async function handleExtractPromise() {
     if (!selectedInvoiceId || !customerMessage.trim()) {
@@ -390,7 +408,7 @@ function App() {
 
           <button
             className="secondary-button"
-            onClick={() => void loadInvoices()}
+            onClick={() => void handleRefreshData()}
             disabled={loadingInvoices}
           >
             {loadingInvoices
