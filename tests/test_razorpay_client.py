@@ -2,11 +2,19 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import MagicMock, patch
 
 from app.razorpay_client import (
     WebhookLedger,
     build_payment_link_payload,
     expected_webhook_signature,
+    verify_webhook_signature,
+)
+from app.razorpay_client import (
+    WebhookLedger,
+    build_payment_link_payload,
+    expected_webhook_signature,
+    get_payment_link,
     verify_webhook_signature,
 )
 
@@ -56,6 +64,58 @@ class PaymentLinkPayloadTests(unittest.TestCase):
                 description="Partial promise against INV-1042",
                 accept_partial=True,
                 first_min_partial_amount=4_800_000,
+            )
+
+class PaymentLinkLookupTests(unittest.TestCase):
+    def test_get_payment_link_fetches_registered_link(self) -> None:
+        response_payload = {
+            "id": "plink_test_exact",
+            "status": "paid",
+            "amount": 4_000_000,
+            "amount_paid": 4_000_000,
+        }
+
+        mocked_response = MagicMock()
+        mocked_response.read.return_value = json.dumps(
+            response_payload
+        ).encode()
+
+        with patch(
+            "app.razorpay_client.urlopen"
+        ) as mocked_urlopen:
+            mocked_urlopen.return_value.__enter__.return_value = (
+                mocked_response
+            )
+
+            result = get_payment_link(
+                key_id="rzp_test_fake",
+                key_secret="fake-secret",
+                payment_link_id="plink_test_exact",
+            )
+
+        request = mocked_urlopen.call_args.args[0]
+
+        self.assertEqual(
+            request.full_url,
+            (
+                "https://api.razorpay.com/v1/"
+                "payment_links/plink_test_exact"
+            ),
+        )
+        self.assertEqual(request.get_method(), "GET")
+        self.assertTrue(
+            request.headers["Authorization"].startswith(
+                "Basic "
+            )
+        )
+        self.assertEqual(result, response_payload)
+
+    def test_get_payment_link_rejects_invalid_id(self) -> None:
+        with self.assertRaises(ValueError):
+            get_payment_link(
+                key_id="rzp_test_fake",
+                key_secret="fake-secret",
+                payment_link_id="not-a-payment-link",
             )
 
 

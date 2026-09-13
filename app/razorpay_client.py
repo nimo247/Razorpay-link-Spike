@@ -12,6 +12,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 
+
 RAZORPAY_PAYMENT_LINKS_URL = "https://api.razorpay.com/v1/payment_links"
 
 
@@ -85,6 +86,40 @@ def create_payment_link(
     except HTTPError as error:
         body = error.read().decode(errors="replace")
         raise RazorpayError(f"Razorpay returned HTTP {error.code}: {body}") from error
+
+def get_payment_link(
+    *,
+    key_id: str,
+    key_secret: str,
+    payment_link_id: str,
+) -> dict[str, Any]:
+    if not payment_link_id.startswith("plink_"):
+        raise ValueError("Invalid Razorpay Payment Link ID")
+
+    credentials = base64.b64encode(
+        f"{key_id}:{key_secret}".encode()
+    ).decode()
+
+    request = Request(
+        f"{RAZORPAY_PAYMENT_LINKS_URL}/{payment_link_id}",
+        method="GET",
+        headers={
+            "Authorization": f"Basic {credentials}",
+            "Accept": "application/json",
+            "User-Agent": "promise-recovery-orchestrator/0.6",
+        },
+    )
+
+    try:
+        with urlopen(request, timeout=20) as response:
+            return json.loads(response.read())
+
+    except HTTPError as error:
+        body = error.read().decode(errors="replace")
+
+        raise RazorpayError(
+            f"Razorpay returned HTTP {error.code}: {body}"
+        ) from error
 
 
 def expected_webhook_signature(raw_body: bytes, webhook_secret: str) -> str:
