@@ -1,11 +1,11 @@
 # Workflow Safety Report
 
-Generated: `2026-08-31T20:22:23.426554+00:00`
+Generated: `2026-09-13T19:51:41.911529+00:00`
 
 ## Summary
 
-- Frozen safety scenarios: **16**
-- Passed: **16**
+- Frozen safety scenarios: **22**
+- Passed: **22**
 - Failed or missing: **0**
 - Safety-control pass rate: **100.0%**
 
@@ -29,6 +29,12 @@ Generated: `2026-08-31T20:22:23.426554+00:00`
 | Deadline worker | Maintain correct invoice state | Broken undisputed promise returns invoice to overdue | PASSED |
 | Webhook security | Verify the exact raw payload | Payload modification invalidates its signature | PASSED |
 | Webhook security | Reject replayed event IDs | Duplicate webhook event ID is recorded once | PASSED |
+| Financial Action Firewall | Require persisted provider truth | MARK_PAID is blocked when no trusted provider event exists | PASSED |
+| Financial Action Firewall | Prevent confirmation bypass | Human confirmation cannot replace verified payment evidence | PASSED |
+| Financial Action Firewall | Guard the mutation boundary | A caller-supplied source cannot directly mutate financial state | PASSED |
+| Financial Action Firewall | Link authorization to execution | An applied payment references its exact Firewall decision | PASSED |
+| Webhook provenance | Exclude unauthenticated payloads | Invalidly signed payloads never enter the trusted event ledger | PASSED |
+| Webhook provenance | Detect conflicting event replay | The same event ID cannot be reused with different payload bytes | PASSED |
 
 ## Interpretation
 

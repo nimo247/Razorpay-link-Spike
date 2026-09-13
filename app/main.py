@@ -10,7 +10,7 @@ from .routes.jobs import router as jobs_router
 def create_app(*args, **kwargs) -> FastAPI:
     application = FastAPI(
         title="Promise-to-Pay Recovery Orchestrator",
-        version="0.4.0",
+        version="0.5.0",
     )
 
     application.include_router(invoices_router)

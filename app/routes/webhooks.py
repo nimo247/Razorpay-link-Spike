@@ -95,10 +95,11 @@ async def process_razorpay_webhook(
             detail="Webhook does not contain a Payment Link ID",
         )
 
+    payload_sha256 = hashlib.sha256(raw_body).hexdigest()
     webhook_event = WebhookEvent(
         event_id=x_razorpay_event_id,
         event_type=event_type,
-        payload_sha256=hashlib.sha256(raw_body).hexdigest(),
+        payload_sha256=payload_sha256,
         payload=payload,
     )
 
@@ -108,6 +109,23 @@ async def process_razorpay_webhook(
 
     except IntegrityError:
         session.rollback()
+
+        recorded_event = session.get(
+            WebhookEvent,
+            x_razorpay_event_id,
+        )
+
+        if (
+            recorded_event is None
+            or recorded_event.payload_sha256 != payload_sha256
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "Webhook event ID was reused with a "
+                    "different payload"
+                ),
+            )
 
         return {
             "accepted": True,

@@ -1,4 +1,6 @@
 from datetime import date
+import hashlib
+import json
 import os
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -17,6 +19,7 @@ from ..models import (
     InvoiceStatus,
     PaymentPromise,
     PromiseStatus,
+    WebhookEvent,
 )
 from ..schemas import (
     PaymentLinkCreationResponse,
@@ -28,6 +31,11 @@ from ..services.payment_application import (
     apply_exact_payment,
 )
 from ..services.audit import add_audit_event
+from ..services.financial_action_firewall import (
+    ActionProposal,
+    FinancialAction,
+    FinancialActionFirewall,
+)
 
 
 router = APIRouter(tags=["Promises"])
@@ -104,6 +112,65 @@ def create_payment_promise(
             detail="This invoice already has a payment promise",
         )
 
+    firewall = FinancialActionFirewall(session)
+    commitment_decision = firewall.authorize(
+        ActionProposal(
+            action=FinancialAction.CREATE_COMMITMENT,
+            invoice_id=invoice.id,
+            amount_paise=body.promised_amount_paise,
+            disputed_amount_paise=(
+                body.disputed_amount_paise
+            ),
+            customer_message=body.customer_message,
+            evidence_quotes=tuple(body.evidence_quotes),
+            promised_date=body.promised_date,
+            human_confirmed=True,
+            actor="MERCHANT",
+        )
+    )
+
+    dispute_decision = None
+    if body.disputed_amount_paise > 0:
+        dispute_decision = firewall.authorize(
+            ActionProposal(
+                action=FinancialAction.REGISTER_DISPUTE,
+                invoice_id=invoice.id,
+                amount_paise=body.disputed_amount_paise,
+                customer_message=body.customer_message,
+                evidence_quotes=tuple(body.evidence_quotes),
+                human_confirmed=True,
+                actor="MERCHANT",
+            )
+        )
+
+    decisions = [
+        commitment_decision,
+        *(
+            [dispute_decision]
+            if dispute_decision is not None
+            else []
+        ),
+    ]
+    rejected_decision = next(
+        (
+            decision
+            for decision in decisions
+            if not decision.authorized
+        ),
+        None,
+    )
+
+    if rejected_decision is not None:
+        session.commit()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "decision": rejected_decision.status.value,
+                "rule": rejected_decision.rule.value,
+                "reason": rejected_decision.reason,
+            },
+        )
+
     payment_promise = PaymentPromise(
         invoice_id=invoice.id,
         customer_message=body.customer_message,
@@ -152,6 +219,23 @@ def create_payment_promise(
         if body.disputed_amount_paise > 0:
             invoice.status = InvoiceStatus.DISPUTED
 
+            add_audit_event(
+                session,
+                invoice_id=invoice.id,
+                promise_id=payment_promise.id,
+                event_type="DISPUTE_REGISTERED",
+                event_data={
+                    "disputed_amount_paise": (
+                        body.disputed_amount_paise
+                    ),
+                    "firewall_decision_id": (
+                        dispute_decision.decision_id
+                        if dispute_decision is not None
+                        else None
+                    ),
+                },
+            )
+
         add_audit_event(
             session,
             invoice_id=invoice.id,
@@ -164,6 +248,10 @@ def create_payment_promise(
                 "committed_amount_paise": committed_amount,
                 "financial_guardrails_passed": True,
                 "evidence_grounded": True,
+                "firewall_decision_ids": [
+                    decision.decision_id
+                    for decision in decisions
+                ],
             },
         )
 
@@ -244,6 +332,33 @@ def generate_payment_link(
             detail="Promise exceeds the current outstanding balance",
         )
 
+    firewall_decision = FinancialActionFirewall(
+        session
+    ).authorize(
+        ActionProposal(
+            action=FinancialAction.CREATE_PAYMENT_LINK,
+            invoice_id=invoice.id,
+            promise_id=payment_promise.id,
+            amount_paise=(
+                payment_promise.promised_amount_paise
+            ),
+            currency="INR",
+            human_confirmed=True,
+            actor="MERCHANT",
+        )
+    )
+
+    if not firewall_decision.authorized:
+        session.commit()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "decision": firewall_decision.status.value,
+                "rule": firewall_decision.rule.value,
+                "reason": firewall_decision.reason,
+            },
+        )
+
     key_id = os.getenv("RAZORPAY_KEY_ID")
     key_secret = os.getenv("RAZORPAY_KEY_SECRET")
 
@@ -266,7 +381,19 @@ def generate_payment_link(
         )
 
     except RazorpayError as error:
-        session.rollback()
+        add_audit_event(
+            session,
+            invoice_id=invoice.id,
+            promise_id=payment_promise.id,
+            event_type="PAYMENT_LINK_CREATION_FAILED",
+            event_data={
+                "firewall_decision_id": (
+                    firewall_decision.decision_id
+                ),
+                "reason": str(error),
+            },
+        )
+        session.commit()
 
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -278,7 +405,19 @@ def generate_payment_link(
     returned_amount = result.get("amount")
 
     if not payment_link_id or not payment_link_url:
-        session.rollback()
+        add_audit_event(
+            session,
+            invoice_id=invoice.id,
+            promise_id=payment_promise.id,
+            event_type="PAYMENT_LINK_CREATION_FAILED",
+            event_data={
+                "firewall_decision_id": (
+                    firewall_decision.decision_id
+                ),
+                "reason": "INCOMPLETE_PROVIDER_RESPONSE",
+            },
+        )
+        session.commit()
 
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -286,7 +425,20 @@ def generate_payment_link(
         )
 
     if returned_amount != payment_promise.promised_amount_paise:
-        session.rollback()
+        add_audit_event(
+            session,
+            invoice_id=invoice.id,
+            promise_id=payment_promise.id,
+            event_type="PAYMENT_LINK_CREATION_FAILED",
+            event_data={
+                "firewall_decision_id": (
+                    firewall_decision.decision_id
+                ),
+                "reason": "PROVIDER_AMOUNT_MISMATCH",
+                "returned_amount_paise": returned_amount,
+            },
+        )
+        session.commit()
 
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -311,6 +463,9 @@ def generate_payment_link(
                 "mode": "EXACT_AMOUNT",
                 "accept_partial": False,
                 "reference_id": reference_id,
+                "firewall_decision_id": (
+                    firewall_decision.decision_id
+                ),
             },
         )
 
@@ -387,6 +542,7 @@ def reconcile_payment_promise(
     external_link_id = external_link.get("id")
     external_status = external_link.get("status")
     amount_paid = external_link.get("amount_paid")
+    external_currency = external_link.get("currency")
 
     if external_link_id != payment_link_id:
         raise HTTPException(
@@ -410,6 +566,12 @@ def reconcile_payment_promise(
                 "Razorpay Payment Link is not paid; "
                 f"current status is {external_status}"
             ),
+        )
+
+    if external_currency != "INR":
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Razorpay returned an unexpected currency",
         )
 
     payment_promise = session.scalar(
@@ -451,6 +613,44 @@ def reconcile_payment_promise(
         )
 
     try:
+        evidence_payload = {
+            "event": "payment_link.reconciliation.paid",
+            "verification_source": "RAZORPAY_API_RECONCILIATION",
+            "payload": {
+                "payment_link": {
+                    "entity": {
+                        "id": external_link_id,
+                        "status": external_status,
+                        "amount": external_link.get("amount"),
+                        "amount_paid": amount_paid,
+                        "currency": external_currency,
+                    }
+                }
+            },
+        }
+        canonical_evidence = json.dumps(
+            evidence_payload,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        evidence_digest = hashlib.sha256(
+            canonical_evidence
+        ).hexdigest()
+        provider_event_id = f"reconcile:{evidence_digest}"
+
+        if session.get(WebhookEvent, provider_event_id) is None:
+            session.add(
+                WebhookEvent(
+                    event_id=provider_event_id,
+                    event_type=(
+                        "payment_link.reconciliation.paid"
+                    ),
+                    payload_sha256=evidence_digest,
+                    payload=evidence_payload,
+                )
+            )
+            session.flush()
+
         result = apply_exact_payment(
             session,
             invoice=invoice,
@@ -458,6 +658,7 @@ def reconcile_payment_promise(
             payment_link_id=payment_link_id,
             amount_paid=amount_paid,
             source="RAZORPAY_RECONCILIATION",
+            razorpay_event_id=provider_event_id,
         )
 
         session.commit()

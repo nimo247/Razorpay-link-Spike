@@ -94,5 +94,41 @@
     "category": "Webhook security",
     "control": "Reject replayed event IDs",
     "expected": "Duplicate webhook event ID is recorded once"
+  },
+  {
+    "node_id": "tests/test_financial_action_firewall.py::test_mark_paid_is_blocked_without_persisted_provider_event",
+    "category": "Financial Action Firewall",
+    "control": "Require persisted provider truth",
+    "expected": "MARK_PAID is blocked when no trusted provider event exists"
+  },
+  {
+    "node_id": "tests/test_financial_action_firewall.py::test_human_confirmation_cannot_override_missing_payment_event",
+    "category": "Financial Action Firewall",
+    "control": "Prevent confirmation bypass",
+    "expected": "Human confirmation cannot replace verified payment evidence"
+  },
+  {
+    "node_id": "tests/test_financial_action_firewall.py::test_payment_mutation_cannot_bypass_firewall_with_source_string",
+    "category": "Financial Action Firewall",
+    "control": "Guard the mutation boundary",
+    "expected": "A caller-supplied source cannot directly mutate financial state"
+  },
+  {
+    "node_id": "tests/test_financial_action_firewall.py::test_authorized_payment_mutation_records_firewall_link",
+    "category": "Financial Action Firewall",
+    "control": "Link authorization to execution",
+    "expected": "An applied payment references its exact Firewall decision"
+  },
+  {
+    "node_id": "tests/test_recovery_workflow.py::test_invalid_signature_never_enters_trusted_event_ledger",
+    "category": "Webhook provenance",
+    "control": "Exclude unauthenticated payloads",
+    "expected": "Invalidly signed payloads never enter the trusted event ledger"
+  },
+  {
+    "node_id": "tests/test_recovery_workflow.py::test_reused_event_id_with_different_payload_is_rejected",
+    "category": "Webhook provenance",
+    "control": "Detect conflicting event replay",
+    "expected": "The same event ID cannot be reused with different payload bytes"
   }
 ]

@@ -9,6 +9,12 @@ from ..models import (
     PromiseStatus,
 )
 from .audit import add_audit_event
+from .financial_action_firewall import (
+    ActionProposal,
+    FinancialAction,
+    FinancialActionFirewall,
+    FirewallRule,
+)
 
 
 SUPPORTED_PAYMENT_SOURCES = {
@@ -80,47 +86,61 @@ def apply_exact_payment(
             ),
         }
 
-    if payment_promise.status != PromiseStatus.LINK_CREATED:
-        move_to_human_review(
-            session,
-            invoice=invoice,
-            payment_promise=payment_promise,
-            event_type="INVALID_PROMISE_STATE",
-            event_data={
-                **event_context,
-                "current_status": (
-                    payment_promise.status.value
-                ),
-            },
+    firewall = FinancialActionFirewall(session)
+    decision = firewall.authorize(
+        ActionProposal(
+            action=FinancialAction.MARK_PAID,
+            invoice_id=invoice.id,
+            promise_id=payment_promise.id,
+            amount_paise=(
+                amount_paid
+                if type(amount_paid) is int
+                else None
+            ),
+            currency="INR",
+            payment_link_id=payment_link_id,
+            provider_event_id=razorpay_event_id,
+            actor=source,
         )
+    )
 
-        return {
-            "already_applied": False,
-            "human_review": True,
-            "reason": "Invalid promise state",
-            "promise_status": payment_promise.status.value,
-            "invoice_status": invoice.status.value,
-            "amount_paid_paise": amount_paid,
-            "outstanding_amount_paise": (
-                invoice.outstanding_amount_paise
+    if not decision.authorized:
+        event_type_by_rule = {
+            FirewallRule.PROMISE_INVALID_STATE: (
+                "INVALID_PROMISE_STATE"
+            ),
+            FirewallRule.PROVIDER_EVENT_AMOUNT_MISMATCH: (
+                "PAYMENT_AMOUNT_MISMATCH"
+            ),
+            FirewallRule.AMOUNT_EXCEEDS_OUTSTANDING: (
+                "PAYMENT_EXCEEDS_OUTSTANDING"
+            ),
+        }
+        reason_by_rule = {
+            FirewallRule.PROMISE_INVALID_STATE: (
+                "Invalid promise state"
+            ),
+            FirewallRule.PROVIDER_EVENT_AMOUNT_MISMATCH: (
+                "Payment amount mismatch"
+            ),
+            FirewallRule.AMOUNT_EXCEEDS_OUTSTANDING: (
+                "Payment exceeds outstanding balance"
             ),
         }
 
-    expected_amount = payment_promise.promised_amount_paise
-
-    # `bool` is a subclass of `int`, so use type() here.
-    if (
-        type(amount_paid) is not int
-        or amount_paid != expected_amount
-    ):
         move_to_human_review(
             session,
             invoice=invoice,
             payment_promise=payment_promise,
-            event_type="PAYMENT_AMOUNT_MISMATCH",
+            event_type=event_type_by_rule.get(
+                decision.rule,
+                "FINANCIAL_ACTION_BLOCKED",
+            ),
             event_data={
                 **event_context,
-                "expected_amount_paise": expected_amount,
+                "firewall_decision_id": decision.decision_id,
+                "firewall_rule": decision.rule.value,
+                "firewall_reason": decision.reason,
                 "received_amount_paise": amount_paid,
             },
         )
@@ -128,34 +148,10 @@ def apply_exact_payment(
         return {
             "already_applied": False,
             "human_review": True,
-            "reason": "Payment amount mismatch",
-            "promise_status": payment_promise.status.value,
-            "invoice_status": invoice.status.value,
-            "amount_paid_paise": amount_paid,
-            "outstanding_amount_paise": (
-                invoice.outstanding_amount_paise
+            "reason": reason_by_rule.get(
+                decision.rule,
+                decision.reason,
             ),
-        }
-
-    if amount_paid > invoice.outstanding_amount_paise:
-        move_to_human_review(
-            session,
-            invoice=invoice,
-            payment_promise=payment_promise,
-            event_type="PAYMENT_EXCEEDS_OUTSTANDING",
-            event_data={
-                **event_context,
-                "amount_paid_paise": amount_paid,
-                "outstanding_amount_paise": (
-                    invoice.outstanding_amount_paise
-                ),
-            },
-        )
-
-        return {
-            "already_applied": False,
-            "human_review": True,
-            "reason": "Payment exceeds outstanding balance",
             "promise_status": payment_promise.status.value,
             "invoice_status": invoice.status.value,
             "amount_paid_paise": amount_paid,
@@ -187,6 +183,7 @@ def apply_exact_payment(
 
     event_data = {
         **event_context,
+        "firewall_decision_id": decision.decision_id,
         "amount_paid_paise": amount_paid,
         "invoice_paid_amount_paise": (
             invoice.paid_amount_paise

@@ -38,6 +38,9 @@ Typical payment recovery tools focus on transaction retries or generic reminders
 
 The LLM proposes structured information. Deterministic code controls evidence grounding, date resolution, financial limits, state transitions, idempotency, and payment application.
 
+The central invariant is: **language models may propose financial actions, but
+only the Financial Action Firewall can authorize them.**
+
 ## End-to-end workflow
 
 ```mermaid
@@ -55,6 +58,31 @@ flowchart TD
 ```
 
 ## Safety controls
+
+### Financial Action Firewall
+
+Every implemented financial-action path follows the same boundary:
+
+```text
+propose → validate evidence and policy → authorize → execute → audit
+```
+
+The Firewall defines five action contracts:
+
+- `CREATE_COMMITMENT`
+- `REGISTER_DISPUTE`
+- `CREATE_PAYMENT_LINK`
+- `CREATE_INSTALLMENT_PLAN`
+- `MARK_PAID`
+
+It returns `AUTHORIZED`, `REQUIRES_CONFIRMATION`, or `BLOCKED`, together with
+the exact rule and evaluated guardrails. Commitment and dispute proposals need
+merchant confirmation. `MARK_PAID` cannot be authorized by customer text,
+model confidence, a caller-supplied source, or human confirmation: the Firewall
+independently loads a matching paid event from the trusted provider ledger.
+
+The installment-plan contract and policy validation are implemented, but an
+installment-plan executor and API route are intentionally deferred.
 
 ### Exact evidence grounding
 
@@ -95,6 +123,7 @@ Extraction is only a preview. The system does not create a payment promise or Pa
 - Signature comparison uses `hmac.compare_digest`.
 - `X-Razorpay-Event-Id` is mandatory.
 - Event IDs are stored as primary keys to prevent replay.
+- Reusing an event ID with different payload bytes is rejected as a conflict.
 - Payment application and webhook recording occur within a database transaction.
 
 ### Missed-webhook reconciliation
@@ -180,6 +209,7 @@ app/
 ├── services/
 │   ├── audit.py
 │   ├── deadline_worker.py
+│   ├── financial_action_firewall.py
 │   ├── payment_application.py
 │   └── promise_extractor.py
 ├── contracts.py
@@ -352,7 +382,7 @@ python -m pytest -q
 Latest verified result:
 
 ```text
-42 passed
+56 passed
 ```
 
 The remaining warning concerns a TestClient dependency deprecation and does not represent a failed test.
@@ -397,8 +427,8 @@ python scripts/evaluate_workflow_safety.py
 
 Latest result:
 
-- Frozen scenarios: 16
-- Passed: 16
+- Frozen scenarios: 22
+- Passed: 22
 - Failed or missing: 0
 - Safety-control pass rate: 100%
 
@@ -415,13 +445,17 @@ Evaluated controls include:
 - Deadline idempotency
 - Completed-payment protection
 - Raw-body signature verification
+- Persisted-provider-evidence enforcement
+- Confirmation-bypass prevention
+- Mutation-boundary protection
+- Conflicting event-ID detection
 
 ## Honest limitations
 
 - Razorpay is exercised in Test Mode, not with real funds.
 - Customer messages are entered through the dashboard; WhatsApp or SMS ingestion is not implemented.
 - The extraction dataset contains ten frozen adversarial smoke cases and is not evidence of broad production accuracy.
-- The sixteen workflow scenarios form a safety smoke suite, not a formal verification.
+- The twenty-two workflow scenarios form a safety smoke suite, not a formal verification.
 - No claim is made about real-world payment-recovery uplift.
 - Automated workflow tests use SQLite; PostgreSQL row locking has been exercised manually but not under concurrent load testing.
 - Groq free-tier rate limits can slow evaluation runs.
@@ -442,4 +476,3 @@ The evaluation focuses on whether the system:
 - Handles a failed webhook or provider request safely.
 
 The reported metrics describe only the checked frozen scenarios.
-

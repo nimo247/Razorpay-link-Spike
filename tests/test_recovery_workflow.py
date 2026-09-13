@@ -48,6 +48,7 @@ def test_reconciliation_applies_paid_link_once(
         "status": "paid",
         "amount": 4_000_000,
         "amount_paid": 4_000_000,
+        "currency": "INR",
     }
 
     with patch(
@@ -118,6 +119,7 @@ def test_reconciliation_rejects_unpaid_link(
             "status": "created",
             "amount": 4_000_000,
             "amount_paid": 0,
+            "currency": "INR",
         }
 
         response = client.post(
@@ -161,6 +163,7 @@ def test_reconciliation_amount_mismatch_moves_to_review(
             "status": "paid",
             "amount": 4_000_000,
             "amount_paid": 3_900_000,
+            "currency": "INR",
         }
 
         response = client.post(
@@ -354,6 +357,7 @@ def send_webhook(
                     "id": "plink_test_exact",
                     "amount": 4_000_000,
                     "amount_paid": amount_paid,
+                    "currency": "INR",
                     "status": (
                         "paid"
                         if event_type == "payment_link.paid"
@@ -475,6 +479,49 @@ def test_repeated_link_request_reuses_existing_link(
     assert mocked_create.call_count == 1
 
 
+def test_invalid_signature_never_enters_trusted_event_ledger(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+    payload = {
+        "event": "payment_link.paid",
+        "payload": {
+            "payment_link": {
+                "entity": {
+                    "id": "plink_untrusted",
+                    "amount_paid": 4_000_000,
+                    "currency": "INR",
+                    "status": "paid",
+                }
+            }
+        },
+    }
+    raw_body = json.dumps(
+        payload,
+        separators=(",", ":"),
+    ).encode()
+
+    response = client.post(
+        "/webhooks/razorpay",
+        content=raw_body,
+        headers={
+            "Content-Type": "application/json",
+            "X-Razorpay-Signature": "not-a-valid-signature",
+            "X-Razorpay-Event-Id": "event_untrusted",
+        },
+    )
+
+    assert response.status_code == 400
+
+    with TestingSession() as session:
+        recorded = session.get(
+            WebhookEvent,
+            "event_untrusted",
+        )
+
+    assert recorded is None
+
+
 def test_paid_webhook_updates_workflow_once(
     recovery_environment,
 ) -> None:
@@ -551,6 +598,50 @@ def test_paid_webhook_updates_workflow_once(
 
     assert payment_event_count == 1
     assert webhook_event_count == 1
+
+
+def test_reused_event_id_with_different_payload_is_rejected(
+    recovery_environment,
+) -> None:
+    client, TestingSession = recovery_environment
+
+    invoice_id = create_invoice(client)
+    promise_id = create_validated_promise(client, invoice_id)
+    create_mock_payment_link(client, promise_id)
+
+    first = send_webhook(
+        client,
+        event_id="event_payload_conflict",
+        event_type="payment_link.paid",
+        amount_paid=4_000_000,
+    )
+    conflicting_replay = send_webhook(
+        client,
+        event_id="event_payload_conflict",
+        event_type="payment_link.paid",
+        amount_paid=3_900_000,
+    )
+
+    assert first.status_code == 200
+    assert conflicting_replay.status_code == 409
+    assert "different payload" in (
+        conflicting_replay.json()["detail"]
+    )
+
+    with TestingSession() as session:
+        invoice = session.get(Invoice, invoice_id)
+        event_count = session.scalar(
+            select(func.count())
+            .select_from(WebhookEvent)
+            .where(
+                WebhookEvent.event_id
+                == "event_payload_conflict"
+            )
+        )
+
+    assert invoice is not None
+    assert invoice.paid_amount_paise == 4_000_000
+    assert event_count == 1
 
 
 def test_payment_amount_mismatch_moves_to_review(
