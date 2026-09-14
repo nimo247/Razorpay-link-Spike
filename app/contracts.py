@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from decimal import Decimal, InvalidOperation
 import re
 from typing import Iterable
 
@@ -67,6 +68,81 @@ def locate_exact_evidence(message: str, quotes: Iterable[str]) -> list[EvidenceS
     if not located:
         raise ContractError("At least one evidence quote is required")
     return located
+
+
+_RUPEE_AMOUNT_PATTERN = re.compile(
+    r"(?<![\\w.])"
+    r"(?P<prefix>₹|rs\\.?|inr)?\\s*"
+    r"(?P<number>\\d[\\d,]*(?:\\.\\d+)?)\\s*"
+    r"(?P<unit>k|thousand|lakh|lac|crore|cr)?"
+    r"(?!\\w)",
+    flags=re.IGNORECASE,
+)
+
+_RUPEE_MULTIPLIERS = {
+    "": Decimal("1"),
+    "k": Decimal("1000"),
+    "thousand": Decimal("1000"),
+    "lakh": Decimal("100000"),
+    "lac": Decimal("100000"),
+    "crore": Decimal("10000000"),
+    "cr": Decimal("10000000"),
+}
+
+_COMMITMENT_UNCERTAINTY_PATTERNS = (
+    re.compile(
+        r"\\b(?:maybe|perhaps|possibly|probably|hopefully|might)\\b",
+        flags=re.IGNORECASE,
+    ),
+    re.compile(
+        r"\\bshould\\s+be\\s+able\\s+to\\b",
+        flags=re.IGNORECASE,
+    ),
+    re.compile(
+        r"\\b(?:i|we)(?:['’]ll|\\s+will)\\s+try\\s+to\\b",
+        flags=re.IGNORECASE,
+    ),
+    re.compile(
+        r"\\bif\\b[^.!?]{0,160}"
+        r"\\b(?:i(?:['’]ll|\\s+will)|we(?:['’]ll|\\s+will))"
+        r"\\s+(?:pay|send|transfer)\\b",
+        flags=re.IGNORECASE,
+    ),
+)
+
+
+def extract_rupee_amounts_from_evidence(
+    quotes: Iterable[str],
+) -> tuple[int, ...]:
+    """Normalize supported rupee expressions from grounded evidence.
+
+    This parser is deliberately narrow. It does not decide which amount is a
+    promise; it lets the Firewall verify that an LLM-proposed amount is
+    actually represented by the verbatim evidence supplied with the proposal.
+    """
+
+    amounts: list[int] = []
+    for quote in quotes:
+        for match in _RUPEE_AMOUNT_PATTERN.finditer(quote):
+            number_text = match.group("number").replace(",", "")
+            unit = (match.group("unit") or "").lower()
+            try:
+                rupees = Decimal(number_text) * _RUPEE_MULTIPLIERS[unit]
+            except (InvalidOperation, KeyError):
+                continue
+            paise = rupees * 100
+            if paise > 0 and paise == paise.to_integral_value():
+                amounts.append(int(paise))
+    return tuple(amounts)
+
+
+def commitment_language_requires_confirmation(message: str) -> bool:
+    """Return True for explicit hedge or conditional commitment language."""
+
+    return any(
+        pattern.search(message)
+        for pattern in _COMMITMENT_UNCERTAINTY_PATTERNS
+    )
 
 
 def resolve_relative_weekday(phrase: str, message_timestamp: datetime) -> datetime:

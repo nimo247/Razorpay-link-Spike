@@ -160,6 +160,62 @@ def test_stability_report_is_rendered_even_at_one_hundred_percent() -> None:
     assert stability["report_sentence"].endswith("none.")
 
 
+def test_live_amount_understatement_is_caught_by_evidence_contract() -> None:
+    dataset, _, _ = load_frozen_dataset()
+    case = next(
+        case for case in dataset["cases"]
+        if case["id"] == "ADV-015"
+    )
+    live_output = {
+        **case["expected_extraction"],
+        "promised_amount_paise": 900_000,
+    }
+
+    decision = decide_case(case, live_output)
+
+    assert decision.status == "BLOCKED"
+    assert decision.rule == "AMOUNT_EXCEEDS_OUTSTANDING"
+
+
+def test_live_conditional_promise_cannot_skip_confirmation() -> None:
+    dataset, _, _ = load_frozen_dataset()
+    case = next(
+        case for case in dataset["cases"]
+        if case["id"] == "AMB-013"
+    )
+    live_output = {
+        **case["expected_extraction"],
+        "intent": "PARTIAL_PROMISE",
+        "needs_review": False,
+        "review_reason": None,
+    }
+
+    decision = decide_case(case, live_output)
+
+    assert decision.status == "REQUIRES_CONFIRMATION"
+    assert decision.rule == "MODEL_REVIEW_REQUIRED"
+
+
+def test_provider_event_drives_payment_truth_despite_model_uncertainty() -> None:
+    dataset, _, _ = load_frozen_dataset()
+    case = next(
+        case for case in dataset["cases"]
+        if case["id"] == "CLAIM-011"
+    )
+    live_output = {
+        **case["expected_extraction"],
+        "intent": "AMBIGUOUS",
+        "needs_review": True,
+        "review_reason": "Model was uncertain.",
+    }
+
+    decision = decide_case(case, live_output)
+
+    assert decision.status == "AUTHORIZED"
+    assert decision.rule == "ALL_GUARDRAILS_PASSED"
+    assert decision.action == "MARK_PAID"
+
+
 def test_provider_registry_separates_known_invalid_and_pending_sequences() -> None:
     registry = json.loads(
         PROVIDER_REGISTRY_PATH.read_text(encoding="utf-8")

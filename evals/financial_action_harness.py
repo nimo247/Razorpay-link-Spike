@@ -164,12 +164,6 @@ def decide_case(
     extraction_payload: dict[str, Any],
 ) -> PipelineDecision:
     extraction_result = PromiseExtraction.model_validate(extraction_payload)
-    if extraction_result.needs_review or extraction_result.intent == "AMBIGUOUS":
-        return PipelineDecision(
-            "REQUIRES_CONFIRMATION",
-            "MODEL_REVIEW_REQUIRED",
-            None,
-        )
 
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(bind=engine)
@@ -177,6 +171,19 @@ def decide_case(
         with Session(engine, expire_on_commit=False) as session:
             invoice, promise = _seed_state(session, case)
             state = case["state"]
+            provider_event = state.get("provider_event")
+            if (
+                provider_event is None
+                and (
+                    extraction_result.needs_review
+                    or extraction_result.intent == "AMBIGUOUS"
+                )
+            ):
+                return PipelineDecision(
+                    "REQUIRES_CONFIRMATION",
+                    "MODEL_REVIEW_REQUIRED",
+                    None,
+                )
             common = {
                 "invoice_id": invoice.id,
                 "currency": state["currency"],
@@ -186,18 +193,24 @@ def decide_case(
                 "actor": "EVALUATION_HARNESS",
             }
 
-            if extraction_result.intent == "ALREADY_PAID":
+            if (
+                provider_event is not None
+                or extraction_result.intent == "ALREADY_PAID"
+            ):
                 if promise is None:
                     return PipelineDecision(
                         "BLOCKED", "PROMISE_NOT_FOUND", "MARK_PAID"
                     )
-                event = state.get("provider_event")
                 proposal = ActionProposal(
                     action=FinancialAction.MARK_PAID,
                     promise_id=promise.id,
                     amount_paise=promise.promised_amount_paise,
                     payment_link_id=promise.payment_link_id,
-                    provider_event_id=(event["event_id"] if event else None),
+                    provider_event_id=(
+                        provider_event["event_id"]
+                        if provider_event is not None
+                        else None
+                    ),
                     **common,
                 )
             elif extraction_result.intent == "DISPUTE_ONLY":

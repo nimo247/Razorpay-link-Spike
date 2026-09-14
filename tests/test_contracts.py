@@ -4,6 +4,8 @@ from zoneinfo import ZoneInfo
 
 from app.contracts import (
     ContractError,
+    commitment_language_requires_confirmation,
+    extract_rupee_amounts_from_evidence,
     locate_exact_evidence,
     resolve_relative_weekday,
     resolve_relative_weekday_from_evidence,
@@ -28,6 +30,35 @@ class EvidenceContractTests(unittest.TestCase):
     def test_empty_quote_is_rejected(self) -> None:
         with self.assertRaises(ContractError):
             locate_exact_evidence("I can pay Friday", [""])
+
+
+class FinancialEvidenceContractTests(unittest.TestCase):
+    def test_rupee_amounts_are_normalized_from_verbatim_evidence(self) -> None:
+        self.assertEqual(
+            extract_rupee_amounts_from_evidence(
+                ["90k", "₹5,000", "2.5 lakh", "Friday"]
+            ),
+            (9_000_000, 500_000, 25_000_000),
+        )
+
+    def test_explicit_hedges_require_confirmation(self) -> None:
+        self.assertTrue(
+            commitment_language_requires_confirmation(
+                "I should be able to pay ₹5,000 Tuesday, maybe."
+            )
+        )
+        self.assertTrue(
+            commitment_language_requires_confirmation(
+                "If the refund arrives, I'll pay 6k Friday."
+            )
+        )
+
+    def test_firm_commitment_is_not_marked_uncertain(self) -> None:
+        self.assertFalse(
+            commitment_language_requires_confirmation(
+                "I will pay 6k Friday."
+            )
+        )
 
 
 class RelativeDateContractTests(unittest.TestCase):

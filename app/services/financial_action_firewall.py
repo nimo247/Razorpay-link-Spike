@@ -9,7 +9,12 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..contracts import ContractError, locate_exact_evidence
+from ..contracts import (
+    ContractError,
+    commitment_language_requires_confirmation,
+    extract_rupee_amounts_from_evidence,
+    locate_exact_evidence,
+)
 from ..models import (
     Invoice,
     InvoiceStatus,
@@ -44,7 +49,9 @@ class FirewallRule(str, Enum):
     PROMISE_INVALID_STATE = "PROMISE_INVALID_STATE"
     INVALID_AMOUNT = "INVALID_AMOUNT"
     AMOUNT_EXCEEDS_OUTSTANDING = "AMOUNT_EXCEEDS_OUTSTANDING"
+    AMOUNT_EVIDENCE_MISMATCH = "AMOUNT_EVIDENCE_MISMATCH"
     EVIDENCE_NOT_GROUNDED = "EVIDENCE_NOT_GROUNDED"
+    MODEL_REVIEW_REQUIRED = "MODEL_REVIEW_REQUIRED"
     INVALID_PROMISED_DATE = "INVALID_PROMISED_DATE"
     PAYMENT_LINK_MISMATCH = "PAYMENT_LINK_MISMATCH"
     PAYMENT_LINK_AMOUNT_MISMATCH = "PAYMENT_LINK_AMOUNT_MISMATCH"
@@ -274,6 +281,38 @@ class FinancialActionFirewall:
                 [*evaluated, "EVIDENCE_IS_VERBATIM"],
             )
 
+        evidence_amounts = extract_rupee_amounts_from_evidence(
+            proposal.evidence_quotes
+        )
+        required_amounts = (amount,) + (
+            (proposal.disputed_amount_paise,)
+            if proposal.disputed_amount_paise > 0
+            else ()
+        )
+        if any(value not in evidence_amounts for value in required_amounts):
+            if any(
+                value > invoice.outstanding_amount_paise
+                for value in evidence_amounts
+            ):
+                return self._decision(
+                    proposal,
+                    invoice,
+                    payment_promise,
+                    FirewallDecisionStatus.BLOCKED,
+                    FirewallRule.AMOUNT_EXCEEDS_OUTSTANDING,
+                    "Grounded evidence contains an amount above the balance",
+                    [*evaluated, "AMOUNT_WITHIN_OUTSTANDING"],
+                )
+            return self._decision(
+                proposal,
+                invoice,
+                payment_promise,
+                FirewallDecisionStatus.BLOCKED,
+                FirewallRule.AMOUNT_EVIDENCE_MISMATCH,
+                "Proposed amounts do not match grounded evidence",
+                [*evaluated, "AMOUNTS_MATCH_GROUNDED_EVIDENCE"],
+            )
+
         if (
             proposal.promised_date is None
             or proposal.promised_date < self.today_provider()
@@ -288,6 +327,19 @@ class FinancialActionFirewall:
                 [*evaluated, "PROMISED_DATE_IS_CURRENT_OR_FUTURE"],
             )
 
+        if commitment_language_requires_confirmation(
+            proposal.customer_message or ""
+        ):
+            return self._decision(
+                proposal,
+                invoice,
+                payment_promise,
+                FirewallDecisionStatus.REQUIRES_CONFIRMATION,
+                FirewallRule.MODEL_REVIEW_REQUIRED,
+                "Conditional or hedged commitment requires disambiguation",
+                [*evaluated, "COMMITMENT_LANGUAGE_IS_UNAMBIGUOUS"],
+            )
+
         return self._confirmation_or_authorization(
             proposal,
             invoice,
@@ -297,7 +349,9 @@ class FinancialActionFirewall:
                 "POSITIVE_COMMITMENT_AMOUNT",
                 "AMOUNT_WITHIN_OUTSTANDING",
                 "EVIDENCE_IS_VERBATIM",
+                "AMOUNTS_MATCH_GROUNDED_EVIDENCE",
                 "PROMISED_DATE_IS_CURRENT_OR_FUTURE",
+                "COMMITMENT_LANGUAGE_IS_UNAMBIGUOUS",
             ],
         )
 
@@ -348,6 +402,33 @@ class FinancialActionFirewall:
                 [*evaluated, "EVIDENCE_IS_VERBATIM"],
             )
 
+        evidence_amounts = extract_rupee_amounts_from_evidence(
+            proposal.evidence_quotes
+        )
+        if amount not in evidence_amounts:
+            if any(
+                value > invoice.outstanding_amount_paise
+                for value in evidence_amounts
+            ):
+                return self._decision(
+                    proposal,
+                    invoice,
+                    payment_promise,
+                    FirewallDecisionStatus.BLOCKED,
+                    FirewallRule.AMOUNT_EXCEEDS_OUTSTANDING,
+                    "Grounded evidence contains an amount above the balance",
+                    [*evaluated, "AMOUNT_WITHIN_OUTSTANDING"],
+                )
+            return self._decision(
+                proposal,
+                invoice,
+                payment_promise,
+                FirewallDecisionStatus.BLOCKED,
+                FirewallRule.AMOUNT_EVIDENCE_MISMATCH,
+                "Proposed dispute amount does not match grounded evidence",
+                [*evaluated, "AMOUNTS_MATCH_GROUNDED_EVIDENCE"],
+            )
+
         return self._confirmation_or_authorization(
             proposal,
             invoice,
@@ -357,6 +438,7 @@ class FinancialActionFirewall:
                 "POSITIVE_DISPUTED_AMOUNT",
                 "AMOUNT_WITHIN_OUTSTANDING",
                 "EVIDENCE_IS_VERBATIM",
+                "AMOUNTS_MATCH_GROUNDED_EVIDENCE",
             ],
         )
 

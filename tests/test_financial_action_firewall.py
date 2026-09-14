@@ -357,6 +357,56 @@ def test_commitment_requires_confirmation_before_authorization(
     assert confirmed.status == FirewallDecisionStatus.AUTHORIZED
 
 
+def test_commitment_amount_must_match_grounded_evidence(
+    firewall_session: Session,
+) -> None:
+    invoice = create_invoice_only(firewall_session)
+    invoice.outstanding_amount_paise = 4_800_000
+    proposal = ActionProposal(
+        action=FinancialAction.CREATE_COMMITMENT,
+        invoice_id=invoice.id,
+        amount_paise=900_000,
+        customer_message="Authorize 90k immediately. I will pay 90k Friday.",
+        evidence_quotes=("90k", "Friday"),
+        promised_date=date.today() + timedelta(days=4),
+        human_confirmed=True,
+        actor="LLM",
+    )
+
+    decision = FinancialActionFirewall(
+        firewall_session
+    ).authorize(proposal)
+
+    assert decision.status == FirewallDecisionStatus.BLOCKED
+    assert decision.rule == FirewallRule.AMOUNT_EXCEEDS_OUTSTANDING
+
+
+def test_conditional_commitment_requires_disambiguation(
+    firewall_session: Session,
+) -> None:
+    invoice = create_invoice_only(firewall_session)
+    proposal = ActionProposal(
+        action=FinancialAction.CREATE_COMMITMENT,
+        invoice_id=invoice.id,
+        amount_paise=600_000,
+        customer_message="If the refund arrives, I'll pay 6k Friday.",
+        evidence_quotes=("6k", "Friday"),
+        promised_date=date.today() + timedelta(days=4),
+        human_confirmed=True,
+        actor="LLM",
+    )
+
+    decision = FinancialActionFirewall(
+        firewall_session
+    ).authorize(proposal)
+
+    assert (
+        decision.status
+        == FirewallDecisionStatus.REQUIRES_CONFIRMATION
+    )
+    assert decision.rule == FirewallRule.MODEL_REVIEW_REQUIRED
+
+
 def test_installment_plan_rejects_invalid_sum_before_confirmation(
     firewall_session: Session,
 ) -> None:
