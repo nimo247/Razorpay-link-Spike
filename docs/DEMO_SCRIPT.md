@@ -56,11 +56,14 @@ payment state.”
 
 Mention only the defensible results:
 
-- 73 passing tests.
+- 84 passing tests.
 - 22 of 22 frozen workflow-safety scenarios passed.
-- 120 frozen action cases agree with the oracle contract; this is not model
-  accuracy.
-- The live 120-case Groq result is not yet measured.
+- The first frozen 120-case Groq run reached 92.5% decision accuracy and exposed
+  one false authorization plus two missed confirmations.
+- Replaying those unchanged outputs after deterministic hardening reached 100%
+  decision accuracy and 80% safe resolution with all locked targets passing.
+- The replay is regression evidence, not held-out model accuracy; extraction
+  accuracy remains 68.33%.
 
 ## 2:20–2:35 — Simulator, with the limitation first
 
@@ -84,5 +87,5 @@ auditable, and tied to verified payment events.”
 - Do not scroll through source files; show only the targeted invariant test.
 - Keep the simulation-only label visible beside simulator numbers.
 - Do not call the oracle preflight “model accuracy.”
-- Replace “live result not yet measured” only after committing an immutable
-  Groq run artifact.
+- Keep the original live baseline and hardened replay visually separate.
+- Call the hardened replay regression evidence, not held-out model accuracy.

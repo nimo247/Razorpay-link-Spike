@@ -72,6 +72,40 @@ The live stability report always renders this sentence, even when every rate is
 
 Perfect model reproducibility is not claimed.
 
+## Verified V1 results
+
+The first full live run evaluated all 120 frozen cases before deterministic
+hardening:
+
+| Metric | First live run |
+|---|---:|
+| Decision accuracy | 92.5% |
+| Extraction case accuracy | 68.33% |
+| Safely resolved without confirmation | 74.17% |
+| False authorizations | 1 |
+| Missed confirmations | 2 |
+| Unnecessary confirmations | 2 |
+| False blocks | 0 |
+
+The frozen 20-case stability subset was called five times per case. Proposal
+stability was 90%, evidence stability was 85%, and final-decision stability was
+100%. Disagreements were concentrated in adversarial and ambiguity cases.
+
+The first run exposed an amount-understatement failure, two ambiguity misses,
+and two over-cautious payment-claim decisions. The immutable outputs and labels
+were preserved. Deterministic evidence checks, ambiguity detection, and
+trusted-state precedence were then hardened.
+
+A cached replay of the **same 120 model outputs** against commit `ee8297e`
+reached 100% decision accuracy and exactly 80% safe resolution, with zero false
+authorizations, missed confirmations, unnecessary confirmations, and false
+blocks. All locked targets passed.
+
+This hardened result is a regression result, not held-out evidence: the original
+failures were inspected while developing the deterministic fixes. Extraction
+accuracy remains 68.33% because neither model outputs nor frozen labels were
+changed.
+
 ## Commands
 
 Verify that the authoring source still matches the frozen hash:

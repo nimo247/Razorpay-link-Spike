@@ -77,17 +77,22 @@ cannot override that invariant.
 
 | Evidence | Latest verified result | What it establishes |
 |---|---:|---|
-| Full backend suite | **73 passed** | Implemented workflows and regressions pass locally. |
+| Full backend suite | **84 passed** | Implemented workflows and hardening regressions pass locally. |
 | Frozen workflow-safety suite | **22/22 passed** | The enumerated deterministic safety controls behaved as expected. |
 | Financial-action oracle preflight | **120/120 contract matches** | Frozen labels are coherent with the deterministic Firewall; this is **not** model accuracy. |
+| First live Groq run | **120/120 evaluated; 92.5% decision accuracy** | The immutable pre-hardening baseline exposed one false authorization and two missed confirmations. |
+| Hardened replay of the same outputs | **100% decision accuracy; 80% safely resolved** | All locked targets pass with zero false authorizations, missed confirmations, unnecessary confirmations, or false blocks. |
+| Live stability subset | **90% proposal / 85% evidence / 100% decision stability** | Five calls per case across the frozen 20-case subset; model reproducibility is not claimed. |
 | Order-equivalence replay | **5/5 identical** | Given fixed proposals, downstream decisions do not depend on case order. |
-| Live Groq run over the 120-case set | **Not yet measured** | No live-model accuracy or stability claim is made yet. |
 | Frozen recovery simulation | **1,600 episodes** | Two policies were compared under explicit fictional assumptions. |
 
-All deterministic artifacts above were regenerated from source tree
-`3c9f5e84825755dc4d515a5bc1781a96f695c651`. Generated timestamps and test
-durations may differ between runs; decisions, safety counts, and the simulator
-result hash remain stable.
+The immutable live outputs and original reports are committed under
+`evals/runs/` and `evals/results/`. After inspecting the baseline failures,
+the deterministic boundary was hardened and the exact same saved outputs were
+replayed against commit `ee8297e`. Because those evaluation cases informed the
+hardening, the 100% replay is regression evidence—not a held-out generalization
+claim. The model extraction accuracy remains 68.33%; no outputs or frozen labels
+were edited.
 
 ## Safety controls
 
@@ -429,7 +434,7 @@ python -m pytest -q
 Latest verified result:
 
 ```text
-73 passed
+84 passed
 ```
 
 The remaining warning concerns a TestClient dependency deprecation and does not represent a failed test.
@@ -488,6 +493,25 @@ accuracy**. The verified preflight result is:
 - Unnecessary confirmations: 0
 - Safely resolved without confirmation: 80%
 - Cached shuffled-order runs: 5/5 identical
+
+The first immutable live run produced:
+
+- Decision accuracy: 92.5%
+- Extraction case accuracy: 68.33%
+- Safely resolved without confirmation: 74.17%
+- Safety misses: 1 false authorization and 2 missed confirmations
+- Unnecessary confirmations: 2
+
+Those failures were retained, inspected, and converted into deterministic
+regressions. Replaying the **unchanged 120 saved model outputs** after hardening
+produced 100% decision accuracy, 80% safe resolution, and zero cases in every
+safety-error bucket. This post-evaluation replay passes all locked acceptance
+targets, but is reported as regression evidence because the same cases guided
+the hardening.
+
+The frozen stability run made five calls for each of 20 preselected cases:
+proposal stability was 90%, evidence stability was 85%, and downstream decision
+stability was 100%. Perfect model reproducibility is not claimed.
 
 The live harness stores immutable Groq outputs and always reports variance over
 the preselected 20-case subset at proposal, evidence, and final-decision level.
@@ -563,7 +587,7 @@ Evaluated controls include:
 
 - Razorpay is exercised in Test Mode, not with real funds.
 - Customer messages are entered through the dashboard; WhatsApp or SMS ingestion is not implemented.
-- The legacy extraction result contains ten live smoke cases. The new 120-case decision set is frozen but has not yet been run against the live model, so the oracle preflight is not evidence of model accuracy.
+- The legacy extraction result contains ten live smoke cases. The 120-case set has one full live run; the hardened replay reuses that same run and is not a held-out generalization result.
 - Financial-action V1 is single-author labeled and has not received independent adjudication.
 - Recovery Simulator V1 uses eight fictional personas with uncalibrated probabilities; its policy comparison is not evidence of real-world uplift.
 - The twenty-two workflow scenarios form a safety smoke suite, not a formal verification.

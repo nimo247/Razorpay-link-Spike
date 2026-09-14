@@ -126,13 +126,29 @@ produce an impressive but misleading headline.
 | Workflow safety | 22/22 scenarios passed | Enumerated deterministic controls work under the test fixtures. |
 | Oracle proposal preflight | 120/120 contract matches | Labels and Firewall decisions agree; this is not LLM accuracy. |
 | Order replay | 5/5 shuffled runs identical | Downstream decisions are order-independent for fixed proposals. |
-| Live Groq evaluation | Not yet measured | No 120-case live-model metric is claimed. |
+| First live Groq run | 92.5% decision accuracy; 68.33% extraction accuracy | Immutable pre-hardening baseline on all 120 frozen cases. |
+| Hardened cached replay | 100% decisions; 80% safely resolved | Same outputs after deterministic hardening; regression evidence, not held-out performance. |
+| Live stability subset | 90% proposal; 85% evidence; 100% decision | Five calls per case; perfect model reproducibility is not claimed. |
 | Recovery simulator | 1,600 synthetic episodes | Policy behavior under fictional assumptions, not expected merchant uplift. |
 
 The 120-case set is frozen and versioned. Its category counts are intentionally
 uneven: clean has 20 cases; six categories have 15 each; evidence/date has 10.
 Labels were fixed before the first live run, and future changes require a new
 dataset version.
+
+The first live run exposed exactly why the layers must be evaluated separately:
+the model understated “90k” as ₹9,000 once, missed two ambiguous commitments,
+and over-deferred two paid claims. The immutable baseline therefore failed the
+locked safety gate. The system was then hardened without editing a model output
+or label: grounded amounts are checked independently, conditional language
+cannot skip confirmation, customer paid claims are routed to provider-event
+verification, and deterministic blockers take precedence over model
+uncertainty.
+
+The unchanged-output replay passes every locked target. That is strong
+regression evidence for the Firewall, but it is not a clean estimate of
+generalization because the failing cases informed the fixes. A new held-out set
+would be required for that claim.
 
 The simulator is equally constrained in its claims. Under eight fictional,
 uncalibrated personas, the promise-aware policy changed simulated amount
