@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session  # noqa: E402
 
 from app.contracts import (  # noqa: E402
     ContractError,
+    payment_completion_claimed,
     resolve_relative_weekday_from_evidence,
 )
 from app.database import Base  # noqa: E402
@@ -172,18 +173,6 @@ def decide_case(
             invoice, promise = _seed_state(session, case)
             state = case["state"]
             provider_event = state.get("provider_event")
-            if (
-                provider_event is None
-                and (
-                    extraction_result.needs_review
-                    or extraction_result.intent == "AMBIGUOUS"
-                )
-            ):
-                return PipelineDecision(
-                    "REQUIRES_CONFIRMATION",
-                    "MODEL_REVIEW_REQUIRED",
-                    None,
-                )
             common = {
                 "invoice_id": invoice.id,
                 "currency": state["currency"],
@@ -192,10 +181,20 @@ def decide_case(
                 "human_confirmed": state["human_confirmed"],
                 "actor": "EVALUATION_HARNESS",
             }
+            payment_claim_routes_to_ledger = (
+                promise is not None
+                and payment_completion_claimed(case["customer_message"])
+            )
+            disputed_amount = extraction_result.disputed_amount_paise
+            overbalance_dispute = (
+                type(disputed_amount) is int
+                and disputed_amount > invoice.outstanding_amount_paise
+            )
 
             if (
                 provider_event is not None
                 or extraction_result.intent == "ALREADY_PAID"
+                or payment_claim_routes_to_ledger
             ):
                 if promise is None:
                     return PipelineDecision(
@@ -213,11 +212,23 @@ def decide_case(
                     ),
                     **common,
                 )
-            elif extraction_result.intent == "DISPUTE_ONLY":
+            elif (
+                overbalance_dispute
+                or extraction_result.intent == "DISPUTE_ONLY"
+            ):
                 proposal = ActionProposal(
                     action=FinancialAction.REGISTER_DISPUTE,
                     amount_paise=extraction_result.disputed_amount_paise,
                     **common,
+                )
+            elif (
+                extraction_result.needs_review
+                or extraction_result.intent == "AMBIGUOUS"
+            ):
+                return PipelineDecision(
+                    "REQUIRES_CONFIRMATION",
+                    "MODEL_REVIEW_REQUIRED",
+                    None,
                 )
             else:
                 if extraction_result.promised_date_text is None:

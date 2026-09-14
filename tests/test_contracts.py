@@ -7,6 +7,7 @@ from app.contracts import (
     commitment_language_requires_confirmation,
     extract_rupee_amounts_from_evidence,
     locate_exact_evidence,
+    payment_completion_claimed,
     resolve_relative_weekday,
     resolve_relative_weekday_from_evidence,
 )
@@ -57,6 +58,24 @@ class FinancialEvidenceContractTests(unittest.TestCase):
         self.assertFalse(
             commitment_language_requires_confirmation(
                 "I will pay 6k Friday."
+            )
+        )
+
+
+    def test_payment_claim_detection_only_routes_completed_payment_language(self) -> None:
+        self.assertTrue(
+            payment_completion_claimed(
+                "I paid via UPI just now, check your account."
+            )
+        )
+        self.assertTrue(
+            payment_completion_claimed(
+                "I have cleared the ₹30,000 balance."
+            )
+        )
+        self.assertFalse(
+            payment_completion_claimed(
+                "I will pay ₹30,000 Friday."
             )
         )
 

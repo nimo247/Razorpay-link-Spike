@@ -111,6 +111,15 @@ _COMMITMENT_UNCERTAINTY_PATTERNS = (
 )
 
 
+_PAYMENT_COMPLETION_CLAIM_PATTERNS = (
+    re.compile(r"\b(?:already\s+)?paid\b", flags=re.IGNORECASE),
+    re.compile(r"\bhave\s+(?:already\s+)?cleared\b", flags=re.IGNORECASE),
+    re.compile(r"\b(?:payment|transaction)\s+(?:is|was)\s+(?:done|complete|completed|successful)\b", flags=re.IGNORECASE),
+    re.compile(r"\b(?:sent|transferred)\b", flags=re.IGNORECASE),
+    re.compile(r"\bhas\s+already\s+left\s+my\s+bank\b", flags=re.IGNORECASE),
+)
+
+
 def extract_rupee_amounts_from_evidence(
     quotes: Iterable[str],
 ) -> tuple[int, ...]:
@@ -142,6 +151,19 @@ def commitment_language_requires_confirmation(message: str) -> bool:
     return any(
         pattern.search(message)
         for pattern in _COMMITMENT_UNCERTAINTY_PATTERNS
+    )
+
+
+def payment_completion_claimed(message: str) -> bool:
+    """Detect a customer's assertion that payment already happened.
+
+    A match is only a routing signal to MARK_PAID verification. It never proves
+    payment and cannot authorize a financial state change without provider truth.
+    """
+
+    return any(
+        pattern.search(message)
+        for pattern in _PAYMENT_COMPLETION_CLAIM_PATTERNS
     )
 
 

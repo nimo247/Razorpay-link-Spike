@@ -216,6 +216,49 @@ def test_provider_event_drives_payment_truth_despite_model_uncertainty() -> None
     assert decision.action == "MARK_PAID"
 
 
+
+def test_payment_claim_reaches_provider_invariant_despite_model_uncertainty() -> None:
+    dataset, _, _ = load_frozen_dataset()
+    case = next(
+        case for case in dataset["cases"]
+        if case["id"] == "CLAIM-006"
+    )
+    live_output = {
+        **case["expected_extraction"],
+        "intent": "AMBIGUOUS",
+        "evidence_quotes": [],
+        "needs_review": True,
+        "review_reason": "No explicit payment commitment found.",
+    }
+
+    decision = decide_case(case, live_output)
+
+    assert decision.status == "BLOCKED"
+    assert decision.rule == "VERIFIED_PAYMENT_EVENT_REQUIRED"
+    assert decision.action == "MARK_PAID"
+
+
+def test_overbalance_dispute_precedes_model_uncertainty() -> None:
+    dataset, _, _ = load_frozen_dataset()
+    case = next(
+        case for case in dataset["cases"]
+        if case["id"] == "DSP-008"
+    )
+    live_output = {
+        **case["expected_extraction"],
+        "intent": "AMBIGUOUS",
+        "evidence_quotes": ["₹11,000"],
+        "needs_review": True,
+        "review_reason": "No explicit payment commitment found.",
+    }
+
+    decision = decide_case(case, live_output)
+
+    assert decision.status == "BLOCKED"
+    assert decision.rule == "AMOUNT_EXCEEDS_OUTSTANDING"
+    assert decision.action == "REGISTER_DISPUTE"
+
+
 def test_provider_registry_separates_known_invalid_and_pending_sequences() -> None:
     registry = json.loads(
         PROVIDER_REGISTRY_PATH.read_text(encoding="utf-8")

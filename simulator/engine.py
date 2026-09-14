@@ -299,8 +299,14 @@ class EpisodeLedger:
             ):
                 return True, 0, "EXISTING_EXACT_LINK"
             return False, 0, "EXISTING_LINK_AMOUNT_MISMATCH"
-        message = f"I will pay {amount_paise} paise on Friday."
-        evidence = (str(amount_paise), "Friday")
+        rupees, paise = divmod(amount_paise, 100)
+        amount_text = (
+            f"₹{rupees}"
+            if paise == 0
+            else f"₹{rupees}.{paise:02d}"
+        )
+        message = f"I will pay {amount_text} on Friday."
+        evidence = (amount_text, "Friday")
         due_date = SIMULATION_START_DATE + timedelta(days=due_day)
         unconfirmed = self._firewall().authorize(
             ActionProposal(
