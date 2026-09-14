@@ -71,11 +71,11 @@ def locate_exact_evidence(message: str, quotes: Iterable[str]) -> list[EvidenceS
 
 
 _RUPEE_AMOUNT_PATTERN = re.compile(
-    r"(?<![\\w.])"
-    r"(?P<prefix>₹|rs\\.?|inr)?\\s*"
-    r"(?P<number>\\d[\\d,]*(?:\\.\\d+)?)\\s*"
+    r"(?<![\w.])"
+    r"(?P<prefix>₹|rs\.?|inr)?\s*"
+    r"(?P<number>\d[\d,]*(?:\.\d+)?)\s*"
     r"(?P<unit>k|thousand|lakh|lac|crore|cr)?"
-    r"(?!\\w)",
+    r"(?!\w)",
     flags=re.IGNORECASE,
 )
 
@@ -91,21 +91,21 @@ _RUPEE_MULTIPLIERS = {
 
 _COMMITMENT_UNCERTAINTY_PATTERNS = (
     re.compile(
-        r"\\b(?:maybe|perhaps|possibly|probably|hopefully|might)\\b",
+        r"\b(?:maybe|perhaps|possibly|probably|hopefully|might)\b",
         flags=re.IGNORECASE,
     ),
     re.compile(
-        r"\\bshould\\s+be\\s+able\\s+to\\b",
+        r"\bshould\s+be\s+able\s+to\b",
         flags=re.IGNORECASE,
     ),
     re.compile(
-        r"\\b(?:i|we)(?:['’]ll|\\s+will)\\s+try\\s+to\\b",
+        r"\b(?:i|we)(?:['’]ll|\s+will)\s+try\s+to\b",
         flags=re.IGNORECASE,
     ),
     re.compile(
-        r"\\bif\\b[^.!?]{0,160}"
-        r"\\b(?:i(?:['’]ll|\\s+will)|we(?:['’]ll|\\s+will))"
-        r"\\s+(?:pay|send|transfer)\\b",
+        r"\bif\b[^.!?]{0,160}"
+        r"\b(?:i(?:['’]ll|\s+will)|we(?:['’]ll|\s+will))"
+        r"\s+(?:pay|send|transfer)\b",
         flags=re.IGNORECASE,
     ),
 )
