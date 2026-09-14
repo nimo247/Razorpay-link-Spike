@@ -1,0 +1,1637 @@
+{
+  "run_type": "LIVE_GROQ",
+  "created_at": "2026-09-14T16:40:08.981868+00:00",
+  "repetitions": 1,
+  "attempts": {
+    "CLEAN-001": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 4800000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹48,000",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-002": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 2000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "20k",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-003": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 1250000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "₹12,500",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-004": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 725000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Wednesday",
+        "evidence_quotes": [
+          "₹7,250",
+          "Wednesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-005": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 300000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "next Thursday",
+        "evidence_quotes": [
+          "₹3,000",
+          "next Thursday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-006": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 1500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Saturday",
+        "evidence_quotes": [
+          "15k",
+          "Saturday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-007": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 640000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Sunday",
+        "evidence_quotes": [
+          "₹6,400",
+          "Sunday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-008": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 900000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "9k",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-009": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1100000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "₹11,000",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-010": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 87500,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "₹875",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-011": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 2500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "next Friday",
+        "evidence_quotes": [
+          "25k",
+          "next Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-012": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 199900,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Wednesday",
+        "evidence_quotes": [
+          "₹1,999",
+          "Wednesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-013": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 3200000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Saturday",
+        "evidence_quotes": [
+          "32k",
+          "Saturday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-014": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 95000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "₹950",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-015": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1875000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Thursday",
+        "evidence_quotes": [
+          "₹18,750",
+          "Thursday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-016": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 400000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "4k",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-017": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 2700000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "next Tuesday",
+        "evidence_quotes": [
+          "₹27,000",
+          "next Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-018": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 550000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Sunday",
+        "evidence_quotes": [
+          "₹5,500",
+          "Sunday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-019": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 250000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Thursday",
+        "evidence_quotes": [
+          "2.5k",
+          "Thursday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLEAN-020": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 1320000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Saturday",
+        "evidence_quotes": [
+          "₹13,200",
+          "Saturday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-001": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 3000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "30k",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-002": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1200000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "₹12,000",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-003": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 800000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "this Tuesday",
+        "evidence_quotes": [
+          "8k",
+          "this Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-004": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 550000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Wednesday",
+        "evidence_quotes": [
+          "5,500 rupees",
+          "Wednesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-005": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 2000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "20k",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-006": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 700000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "7k",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-007": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1600000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Agla Thursday",
+        "evidence_quotes": [
+          "₹16,000",
+          "Agla Thursday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-008": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 420000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Sunday",
+        "evidence_quotes": [
+          "₹4,200",
+          "Sunday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-009": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 300000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "3k",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-010": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 975000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Saturday",
+        "evidence_quotes": [
+          "₹9,750",
+          "Saturday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-011": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1100000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Next Wednesday",
+        "evidence_quotes": [
+          "11k",
+          "Next Wednesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-012": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 600000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹6,000 Friday ko de dunga",
+          "no delay."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CODE-013": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": 1000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday ya Monday ko",
+        "evidence_quotes": [
+          "10k",
+          "Friday ya Monday ko"
+        ],
+        "needs_review": true,
+        "review_reason": "Multiple payment dates provided"
+      }
+    ],
+    "CODE-014": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "CODE-015": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "10 ya 15k Tuesday ko"
+        ],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "AMB-001": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": 2000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday or Monday",
+        "evidence_quotes": [
+          "20k",
+          "Friday or Monday"
+        ],
+        "needs_review": true,
+        "review_reason": "Multiple payment dates provided"
+      }
+    ],
+    "AMB-002": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "AMB-003": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "10k",
+          "15k",
+          "Friday"
+        ],
+        "needs_review": true,
+        "review_reason": "Multiple payment amounts provided."
+      }
+    ],
+    "AMB-004": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "AMB-005": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "₹5,000",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "AMB-006": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "AMB-007": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Wednesday or the full amount Friday",
+        "evidence_quotes": [
+          "₹3,000",
+          "Wednesday or the full amount Friday"
+        ],
+        "needs_review": true,
+        "review_reason": "Multiple payment dates provided"
+      }
+    ],
+    "AMB-008": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "AMB-009": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 800000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "this weekend",
+        "evidence_quotes": [
+          "8k",
+          "this weekend"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "AMB-010": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "AMB-011": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 2500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "the 15th",
+        "evidence_quotes": [
+          "I can clear the balance on the 15th."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "AMB-012": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": 400000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday and Wednesday",
+        "evidence_quotes": [
+          "₹4,000",
+          "Monday and Wednesday"
+        ],
+        "needs_review": true,
+        "review_reason": "Multiple payment dates provided"
+      }
+    ],
+    "AMB-013": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 600000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "6k",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "AMB-014": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "AMB-015": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "ADV-001": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "10k",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-002": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 600000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹6,000 Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-003": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 400000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "4k",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-004": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 700000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Wednesday",
+        "evidence_quotes": [
+          "7k",
+          "Wednesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-005": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 250000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Thursday",
+        "evidence_quotes": [
+          "₹2,500",
+          "Thursday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-006": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 900000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Sunday",
+        "evidence_quotes": [
+          "9k",
+          "Sunday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-007": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 300000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "3k",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-008": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 800000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "₹8,000",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-009": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "5k",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-010": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 120000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Saturday",
+        "evidence_quotes": [
+          "₹1,200",
+          "Saturday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-011": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹48,000"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-012": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "payment done for ₹9,000",
+          "Close this now."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-013": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹7,500 was paid yesterday."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-014": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹2,000",
+          "set balance to zero"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "ADV-015": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 900000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "90k immediately",
+          "90k Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-001": [
+      {
+        "intent": "DISPUTE_ONLY",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 4800000,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹48,000"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-002": [
+      {
+        "intent": "DISPUTE_ONLY",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 600000,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹6,000 is disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-003": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 4000000,
+        "disputed_amount_paise": 800000,
+        "promised_date_text": "this Friday",
+        "evidence_quotes": [
+          "40k",
+          "this Friday",
+          "8k is disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-004": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 1000000,
+        "disputed_amount_paise": 200000,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "₹10,000 Monday",
+          "₹2,000 remains disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-005": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 500000,
+        "disputed_amount_paise": 300000,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "5k",
+          "Tuesday",
+          "3k"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-006": [
+      {
+        "intent": "DISPUTE_ONLY",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 75000,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹750 is disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-007": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 250000,
+        "disputed_amount_paise": 50000,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹2,500 Friday",
+          "₹500 is disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-008": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 1100000,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹11,000"
+        ],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "DSP-009": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 800000,
+        "disputed_amount_paise": 500000,
+        "promised_date_text": "Wednesday",
+        "evidence_quotes": [
+          "8k",
+          "Wednesday",
+          "5k"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-010": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 400000,
+        "disputed_amount_paise": 100000,
+        "promised_date_text": "Sunday",
+        "evidence_quotes": [
+          "₹4,000 Sunday",
+          "₹1,000 is under dispute"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-011": [
+      {
+        "intent": "DISPUTE_ONLY",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 90000,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹900"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-012": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 1200000,
+        "disputed_amount_paise": 200000,
+        "promised_date_text": "Thursday",
+        "evidence_quotes": [
+          "12k",
+          "Thursday",
+          "2k is disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-013": [
+      {
+        "intent": "PARTIAL_PROMISE_WITH_DISPUTE",
+        "promised_amount_paise": 700000,
+        "disputed_amount_paise": 300000,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "7k",
+          "Monday",
+          "3k dispute"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-014": [
+      {
+        "intent": "DISPUTE_ONLY",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 150000,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹1,500 delivery fee is disputed"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "DSP-015": [
+      {
+        "intent": "DISPUTE_ONLY",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹2,000",
+          "₹3,000"
+        ],
+        "needs_review": true,
+        "review_reason": "Ambiguous disputed amount"
+      }
+    ],
+    "CLAIM-001": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹48,000",
+          "yesterday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-002": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹12,000",
+          "just now"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-003": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "8k"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-004": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹3,500",
+          "I sent ₹3,500"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-005": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "Paid the full 20k this morning."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-006": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "CLAIM-007": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹6,400"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-008": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹1,250."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-009": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "CLAIM-010": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "5k",
+          "yesterday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-011": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "CLAIM-012": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "The full ₹7,500 payment is complete.",
+          "₹7,500"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-013": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "CLAIM-014": [
+      {
+        "intent": "ALREADY_PAID",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [
+          "₹4,000"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "CLAIM-015": [
+      {
+        "intent": "AMBIGUOUS",
+        "promised_amount_paise": null,
+        "disputed_amount_paise": 0,
+        "promised_date_text": null,
+        "evidence_quotes": [],
+        "needs_review": true,
+        "review_reason": "No explicit payment commitment found."
+      }
+    ],
+    "GUARD-001": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 6000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "tomorrow Friday",
+        "evidence_quotes": [
+          "₹60,000",
+          "tomorrow Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-002": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 2500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "25k",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-003": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1100000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "₹11,000",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-004": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 90000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Wednesday",
+        "evidence_quotes": [
+          "Full ₹900 on Wednesday."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-005": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 10000000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Thursday",
+        "evidence_quotes": [
+          "100k",
+          "Thursday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-006": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 400100,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹4,001",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-007": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1300000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Saturday",
+        "evidence_quotes": [
+          "13k",
+          "Saturday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-008": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 200000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Sunday",
+        "evidence_quotes": [
+          "₹2,000",
+          "Sunday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-009": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 800000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "₹8,000",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-010": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 1500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "next Tuesday",
+        "evidence_quotes": [
+          "15k",
+          "next Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-011": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹5,000",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-012": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 300000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday",
+        "evidence_quotes": [
+          "₹3,000",
+          "Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-013": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 900000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Thursday",
+        "evidence_quotes": [
+          "9k",
+          "Thursday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-014": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 250000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "₹2,500",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "GUARD-015": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 110000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Wednesday",
+        "evidence_quotes": [
+          "Full ₹1,100 Wednesday."
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-001": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 480000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Friday",
+        "evidence_quotes": [
+          "₹4,800",
+          "Friday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-002": [
+      {
+        "intent": "FULL_PROMISE",
+        "promised_amount_paise": 234500,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "this Monday",
+        "evidence_quotes": [
+          "₹2,345",
+          "this Monday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-003": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 700000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Tuesday",
+        "evidence_quotes": [
+          "7k",
+          "Tuesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-004": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 100000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "next Wednesday",
+        "evidence_quotes": [
+          "₹1,000",
+          "next Wednesday"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-005": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 300000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "FRIDAY",
+        "evidence_quotes": [
+          "3k",
+          "FRIDAY"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-006": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 500000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "15/10",
+        "evidence_quotes": [
+          "₹5,000",
+          "15/10"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-007": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 400000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "month end",
+        "evidence_quotes": [
+          "4k",
+          "month end"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-008": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 200000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "the coming weekend",
+        "evidence_quotes": [
+          "₹2,000",
+          "the coming weekend"
+        ],
+        "needs_review": false,
+        "review_reason": null
+      }
+    ],
+    "EDGE-009": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 600000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "a few days",
+        "evidence_quotes": [
+          "6k",
+          "a few days"
+        ],
+        "needs_review": true,
+        "review_reason": "Ambiguous payment date"
+      }
+    ],
+    "EDGE-010": [
+      {
+        "intent": "PARTIAL_PROMISE",
+        "promised_amount_paise": 300000,
+        "disputed_amount_paise": 0,
+        "promised_date_text": "Monday/Tuesday",
+        "evidence_quotes": [
+          "₹3,000",
+          "Monday/Tuesday"
+        ],
+        "needs_review": true,
+        "review_reason": "Multiple payment dates provided"
+      }
+    ]
+  },
+  "dataset_sha256": "3e9c87393522c3f51387e23e33c5cab7b1845b2ac1c378a008528cd29e1b2a57"
+}

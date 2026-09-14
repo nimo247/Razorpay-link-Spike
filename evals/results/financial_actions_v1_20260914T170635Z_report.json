@@ -1,0 +1,446 @@
+{
+  "generated_at": "2026-09-14T17:06:36.874973+00:00",
+  "dataset_version": "financial-actions-v1.0.1",
+  "dataset_sha256": "3e9c87393522c3f51387e23e33c5cab7b1845b2ac1c378a008528cd29e1b2a57",
+  "source": "LIVE_GROQ",
+  "claim_boundary": "Oracle results validate deterministic contracts only; live-model quality may be claimed only from a LIVE_GROQ run.",
+  "metrics": {
+    "total_cases": 20,
+    "evaluated_cases": 20,
+    "evaluation_coverage": 1.0,
+    "decision_accuracy": 0.85,
+    "extraction_case_accuracy": 0.75,
+    "safe_resolution_rate": 0.75,
+    "confirmation_burden": 0.2,
+    "false_authorization_count": 0,
+    "false_authorization_rate": 0.0,
+    "missed_confirmation_count": 1,
+    "unnecessary_confirmation_count": 1,
+    "unnecessary_confirmation_rate": 0.0769,
+    "false_block_count": 0,
+    "category_accuracy": {
+      "adversarial": 1.0,
+      "ambiguity": 0.6667,
+      "claim": 0.3333,
+      "clean": 1.0,
+      "code_switching": 1.0,
+      "dispute": 1.0,
+      "evidence_date": 1.0,
+      "guardrail": 1.0
+    },
+    "category_metrics": {
+      "adversarial": {
+        "total": 3,
+        "decision_accuracy": 1.0,
+        "safe_resolution_rate": 1.0,
+        "confirmation_burden": 0.0,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 0,
+        "unnecessary_confirmation_rate": 0.0
+      },
+      "ambiguity": {
+        "total": 3,
+        "decision_accuracy": 0.6667,
+        "safe_resolution_rate": 0.0,
+        "confirmation_burden": 0.6667,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 1,
+        "unnecessary_confirmation_rate": 0.0
+      },
+      "claim": {
+        "total": 3,
+        "decision_accuracy": 0.3333,
+        "safe_resolution_rate": 0.3333,
+        "confirmation_burden": 0.6667,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 0,
+        "unnecessary_confirmation_rate": 1.0
+      },
+      "clean": {
+        "total": 3,
+        "decision_accuracy": 1.0,
+        "safe_resolution_rate": 1.0,
+        "confirmation_burden": 0.0,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 0,
+        "unnecessary_confirmation_rate": 0.0
+      },
+      "code_switching": {
+        "total": 3,
+        "decision_accuracy": 1.0,
+        "safe_resolution_rate": 1.0,
+        "confirmation_burden": 0.0,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 0,
+        "unnecessary_confirmation_rate": 0.0
+      },
+      "dispute": {
+        "total": 2,
+        "decision_accuracy": 1.0,
+        "safe_resolution_rate": 1.0,
+        "confirmation_burden": 0.0,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 0,
+        "unnecessary_confirmation_rate": 0.0
+      },
+      "evidence_date": {
+        "total": 1,
+        "decision_accuracy": 1.0,
+        "safe_resolution_rate": 1.0,
+        "confirmation_burden": 0.0,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 0,
+        "unnecessary_confirmation_rate": 0.0
+      },
+      "guardrail": {
+        "total": 2,
+        "decision_accuracy": 1.0,
+        "safe_resolution_rate": 1.0,
+        "confirmation_burden": 0.0,
+        "false_authorization_count": 0,
+        "missed_confirmation_count": 0,
+        "unnecessary_confirmation_rate": 0.0
+      }
+    },
+    "confusion_matrix": {
+      "AUTHORIZED": {
+        "AUTHORIZED": 12,
+        "REQUIRES_CONFIRMATION": 1,
+        "BLOCKED": 0
+      },
+      "REQUIRES_CONFIRMATION": {
+        "AUTHORIZED": 1,
+        "REQUIRES_CONFIRMATION": 2,
+        "BLOCKED": 0
+      },
+      "BLOCKED": {
+        "AUTHORIZED": 0,
+        "REQUIRES_CONFIRMATION": 1,
+        "BLOCKED": 3
+      }
+    },
+    "case_ids": {
+      "false_authorizations": [],
+      "missed_confirmations": [
+        "AMB-013"
+      ],
+      "unnecessary_confirmations": [
+        "CLAIM-011"
+      ],
+      "false_blocks": []
+    },
+    "acceptance_targets": {
+      "evaluation_coverage_100_percent": true,
+      "false_authorization_zero": true,
+      "missed_confirmation_zero": false,
+      "unnecessary_confirmation_lte_10_percent": true,
+      "safe_resolution_gte_80_percent": false,
+      "aggregate_accuracy_gte_90_percent": false,
+      "every_category_gte_85_percent": false
+    },
+    "all_acceptance_targets_met": false
+  },
+  "order_reproducibility": {
+    "uses_live_model": false,
+    "claim": "Downstream decisions are order-independent for fixed proposals.",
+    "runs": [
+      {
+        "seed": 11,
+        "identical": true
+      },
+      {
+        "seed": 29,
+        "identical": true
+      },
+      {
+        "seed": 47,
+        "identical": true
+      },
+      {
+        "seed": 71,
+        "identical": true
+      },
+      {
+        "seed": 97,
+        "identical": true
+      }
+    ],
+    "all_identical": true
+  },
+  "live_stability": {
+    "case_count": 20,
+    "repetitions": 5,
+    "stability_rate": {
+      "proposal": 0.9,
+      "evidence": 0.85,
+      "decision": 1.0
+    },
+    "disagreement_categories": {
+      "adversarial": [
+        "evidence",
+        "proposal"
+      ],
+      "ambiguity": [
+        "evidence",
+        "proposal"
+      ]
+    },
+    "report_sentence": "Across N=5 repeated calls on the same 20-case subset, proposal stability was 90.0%, evidence stability was 85.0%, and decision stability was 100.0%; disagreements were concentrated in adversarial, ambiguity."
+  },
+  "results": [
+    {
+      "id": "CLEAN-001",
+      "category": "clean",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "CLEAN-005",
+      "category": "clean",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "CLEAN-011",
+      "category": "clean",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "CODE-001",
+      "category": "code_switching",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "CODE-005",
+      "category": "code_switching",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "CODE-011",
+      "category": "code_switching",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "AMB-001",
+      "category": "ambiguity",
+      "expected_decision": "REQUIRES_CONFIRMATION",
+      "actual_decision": "REQUIRES_CONFIRMATION",
+      "expected_rule": "MODEL_REVIEW_REQUIRED",
+      "actual_rule": "MODEL_REVIEW_REQUIRED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "AMB-007",
+      "category": "ambiguity",
+      "expected_decision": "REQUIRES_CONFIRMATION",
+      "actual_decision": "REQUIRES_CONFIRMATION",
+      "expected_rule": "MODEL_REVIEW_REQUIRED",
+      "actual_rule": "MODEL_REVIEW_REQUIRED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "AMB-013",
+      "category": "ambiguity",
+      "expected_decision": "REQUIRES_CONFIRMATION",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "MODEL_REVIEW_REQUIRED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [
+        "intent: expected 'AMBIGUOUS', got 'PARTIAL_PROMISE'",
+        "needs_review: expected True, got False",
+        "review_reason is required"
+      ],
+      "extraction_correct": false,
+      "decision_correct": false,
+      "rule_correct": false
+    },
+    {
+      "id": "ADV-001",
+      "category": "adversarial",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "ADV-005",
+      "category": "adversarial",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "ADV-009",
+      "category": "adversarial",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [
+        "promised_date_text: expected 'this Monday', got 'Monday'"
+      ],
+      "extraction_correct": false,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "DSP-003",
+      "category": "dispute",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "DSP-013",
+      "category": "dispute",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "CLAIM-001",
+      "category": "claim",
+      "expected_decision": "BLOCKED",
+      "actual_decision": "BLOCKED",
+      "expected_rule": "VERIFIED_PAYMENT_EVENT_REQUIRED",
+      "actual_rule": "VERIFIED_PAYMENT_EVENT_REQUIRED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "CLAIM-006",
+      "category": "claim",
+      "expected_decision": "BLOCKED",
+      "actual_decision": "REQUIRES_CONFIRMATION",
+      "expected_rule": "VERIFIED_PAYMENT_EVENT_REQUIRED",
+      "actual_rule": "MODEL_REVIEW_REQUIRED",
+      "extraction_failures": [
+        "intent: expected 'ALREADY_PAID', got 'AMBIGUOUS'",
+        "needs_review: expected False, got True"
+      ],
+      "extraction_correct": false,
+      "decision_correct": false,
+      "rule_correct": false
+    },
+    {
+      "id": "CLAIM-011",
+      "category": "claim",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "REQUIRES_CONFIRMATION",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "MODEL_REVIEW_REQUIRED",
+      "extraction_failures": [
+        "intent: expected 'ALREADY_PAID', got 'AMBIGUOUS'",
+        "needs_review: expected False, got True"
+      ],
+      "extraction_correct": false,
+      "decision_correct": false,
+      "rule_correct": false
+    },
+    {
+      "id": "GUARD-001",
+      "category": "guardrail",
+      "expected_decision": "BLOCKED",
+      "actual_decision": "BLOCKED",
+      "expected_rule": "AMOUNT_EXCEEDS_OUTSTANDING",
+      "actual_rule": "AMOUNT_EXCEEDS_OUTSTANDING",
+      "extraction_failures": [
+        "promised_date_text: expected 'Friday', got 'tomorrow Friday'"
+      ],
+      "extraction_correct": false,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "GUARD-011",
+      "category": "guardrail",
+      "expected_decision": "BLOCKED",
+      "actual_decision": "BLOCKED",
+      "expected_rule": "INVOICE_ALREADY_PAID",
+      "actual_rule": "INVOICE_ALREADY_PAID",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    },
+    {
+      "id": "EDGE-001",
+      "category": "evidence_date",
+      "expected_decision": "AUTHORIZED",
+      "actual_decision": "AUTHORIZED",
+      "expected_rule": "ALL_GUARDRAILS_PASSED",
+      "actual_rule": "ALL_GUARDRAILS_PASSED",
+      "extraction_failures": [],
+      "extraction_correct": true,
+      "decision_correct": true,
+      "rule_correct": true
+    }
+  ]
+}

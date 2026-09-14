@@ -4,7 +4,7 @@
   "case_count": 120,
   "stability_subset_count": 20,
   "frozen_at": "2026-09-14T00:00:00Z",
-  "first_live_model_run_at": null,
+  "first_live_model_run_at": "2026-09-14T16:09:05.498680+00:00",
   "pre_model_amendments": [
     {
       "previous_sha256": "596abbcaac59fc5a42315a6e5a94cad95c0e1bc667614b114ba5f53ce80d8627",
