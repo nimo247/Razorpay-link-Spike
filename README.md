@@ -1,10 +1,19 @@
-# Promise-to-Pay Recovery Orchestrator
+# RecoveryOS — Promise-to-Pay Recovery Orchestrator
 
-A guarded receivables-recovery system for small merchants that turns unstructured customer commitments into validated payment promises, exact-amount Razorpay Payment Links, and an auditable recovery workflow.
+A policy-constrained receivables-recovery system that turns unstructured customer commitments into validated payment promises, exact-amount Razorpay Payment Links, and an auditable recovery workflow—without allowing generated text to become financial truth.
 
 The core product insight is simple: **recovering an invoice is not only about retrying a failed transaction; it is about tracking what the customer promised, when they promised it, and whether that promise was fulfilled.**
 
 > This project uses Razorpay Test Mode. It does not process real money.
+
+**Thesis:** the LLM interprets language; deterministic infrastructure decides
+what may happen; verified provider events decide what did happen.
+
+[Architecture](#system-architecture) ·
+[Verified results](#verified-results) ·
+[Evaluation protocol](docs/EVALUATION_PROTOCOL.md) ·
+[Technical article](docs/WHY_THE_LLM_SHOULD_NEVER_BE_THE_LEDGER.md) ·
+[Demo script](docs/DEMO_SCRIPT.md)
 
 ## What it does
 
@@ -41,21 +50,44 @@ The LLM proposes structured information. Deterministic code controls evidence gr
 The central invariant is: **language models may propose financial actions, but
 only the Financial Action Firewall can authorize them.**
 
-## End-to-end workflow
+## System architecture
 
 ```mermaid
-flowchart TD
-    A["Overdue invoice"] --> B["Customer reply"]
-    B --> C["Groq structured extraction"]
-    C --> D["Deterministic validation"]
-    D --> E{"Human confirms?"}
-    E -- No --> F["Review or reject"]
-    E -- Yes --> G["Validated payment promise"]
-    G --> H["Exact-amount Razorpay link"]
-    H --> I["Signed payment webhook"]
-    I --> J["Idempotent ledger update"]
-    J --> K["Dashboard and audit trail"]
+flowchart TB
+    A["Customer message"] --> B["LLM proposal + verbatim evidence"]
+    B --> C["Financial Action Firewall"]
+    C -->|AUTHORIZED| D["Deterministic executor"]
+    C -->|REQUIRES_CONFIRMATION| E["Human confirmation"]
+    C -->|BLOCKED| F["Audit record"]
+    E --> C
+    D --> G["Razorpay Test Mode"]
+    G --> H["Raw-body HMAC verification"]
+    H --> I["Trusted provider-event ledger"]
+    I --> C
+    D --> J["Invoice + promise state"]
+    J --> F
 ```
+
+The loop is intentional. A customer claim such as “I already paid” can create
+a proposal, but `MARK_PAID` remains blocked until the Firewall independently
+finds a matching verified event in the provider ledger. Human confirmation
+cannot override that invariant.
+
+## Verified results
+
+| Evidence | Latest verified result | What it establishes |
+|---|---:|---|
+| Full backend suite | **73 passed** | Implemented workflows and regressions pass locally. |
+| Frozen workflow-safety suite | **22/22 passed** | The enumerated deterministic safety controls behaved as expected. |
+| Financial-action oracle preflight | **120/120 contract matches** | Frozen labels are coherent with the deterministic Firewall; this is **not** model accuracy. |
+| Order-equivalence replay | **5/5 identical** | Given fixed proposals, downstream decisions do not depend on case order. |
+| Live Groq run over the 120-case set | **Not yet measured** | No live-model accuracy or stability claim is made yet. |
+| Frozen recovery simulation | **1,600 episodes** | Two policies were compared under explicit fictional assumptions. |
+
+All deterministic artifacts above were regenerated from source tree
+`3c9f5e84825755dc4d515a5bc1781a96f695c651`. Generated timestamps and test
+durations may differ between runs; decisions, safety counts, and the simulator
+result hash remain stable.
 
 ## Safety controls
 
@@ -475,6 +507,22 @@ The committed run uses 100 episodes per persona per policy (1,600 total) and
 replays the full run to verify its deterministic result hash. It reports
 simulated recovery, contacts, confirmations, escalations, blocked unsupported
 payment claims, policy violations, and false payment-state changes.
+
+| Synthetic metric | Generic exact-link reminders | Promise-aware Firewall | Difference |
+|---|---:|---:|---:|
+| Amount recovery | 30.91% | 33.98% | +3.07 pp |
+| Any recovery | 22.00% | 37.38% | +15.38 pp |
+| Full recovery | 22.00% | 15.37% | −6.63 pp |
+| Average contacts | 5.188 | 1.869 | −3.319 |
+| Human escalation | 0.00% | 42.00% | +42.00 pp |
+| Unsupported paid claims blocked | 0 | 213 | +213 |
+| False payment-state changes | 0 | 0 | 0 |
+| Policy violations | 0 | 0 | 0 |
+
+Under these fictional assumptions, the promise-aware policy reaches more
+accounts and recovers slightly more simulated value with fewer contacts. It
+also produces fewer full recoveries and far more human escalations. Those
+trade-offs are part of the result—not numbers to hide behind the aggregate.
 
 These are **fictional, uncalibrated simulations—not observed recovery rates or
 expected merchant uplift**. See [docs/SIMULATOR_DESIGN.md](docs/SIMULATOR_DESIGN.md)
