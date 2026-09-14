@@ -187,6 +187,8 @@ Repeated execution is idempotent, and completed payments cannot be marked broken
 - Pytest
 - Frozen adversarial extraction cases
 - Frozen workflow-safety scenarios
+- Versioned 120-case financial-action decision set
+- Cached order-equivalence and live-model stability harnesses
 
 ## Live integration evidence
 
@@ -227,11 +229,17 @@ frontend/
 └── vite.config.ts
 
 evals/
+├── financial_action_cases_v1.json
+├── financial_action_cases_v1.lock.json
+├── financial_action_harness.py
 ├── promise_extraction_cases.json
+├── provider_event_sequences_v1.json
 ├── workflow_safety_cases.json
 └── results/
 
 scripts/
+├── build_financial_action_eval_v1.py
+├── evaluate_financial_actions.py
 ├── evaluate_promise_extraction.py
 ├── evaluate_workflow_safety.py
 └── seed_demo_invoice.py
@@ -382,7 +390,7 @@ python -m pytest -q
 Latest verified result:
 
 ```text
-56 passed
+65 passed
 ```
 
 The remaining warning concerns a TestClient dependency deprecation and does not represent a failed test.
@@ -419,6 +427,34 @@ Latest frozen smoke-set result:
 
 The script spaces requests to accommodate free-tier rate limits.
 
+### Financial-action evaluation V1
+
+The expanded set contains **120 labels frozen before the first new model run**.
+It evaluates the final `AUTHORIZED`, `REQUIRES_CONFIRMATION`, and `BLOCKED`
+decision across clean, code-switched, ambiguous, adversarial, dispute, claim,
+guardrail, and evidence/date cases.
+
+```bash
+python scripts/build_financial_action_eval_v1.py
+python scripts/evaluate_financial_actions.py --source oracle
+```
+
+The oracle-proposal result verifies that the hand-authored labels and
+deterministic Firewall agree. It is deliberately **not reported as model
+accuracy**. The verified preflight result is:
+
+- Cases: 120
+- False authorizations: 0
+- Missed confirmations: 0
+- Unnecessary confirmations: 0
+- Safely resolved without confirmation: 80%
+- Cached shuffled-order runs: 5/5 identical
+
+The live harness stores immutable Groq outputs and always reports variance over
+the preselected 20-case subset at proposal, evidence, and final-decision level.
+See [docs/EVALUATION_PROTOCOL.md](docs/EVALUATION_PROTOCOL.md) for target
+definitions, label history, commands, and claim boundaries.
+
 ### Frozen workflow-safety evaluation
 
 ```bash
@@ -454,7 +490,8 @@ Evaluated controls include:
 
 - Razorpay is exercised in Test Mode, not with real funds.
 - Customer messages are entered through the dashboard; WhatsApp or SMS ingestion is not implemented.
-- The extraction dataset contains ten frozen adversarial smoke cases and is not evidence of broad production accuracy.
+- The legacy extraction result contains ten live smoke cases. The new 120-case decision set is frozen but has not yet been run against the live model, so the oracle preflight is not evidence of model accuracy.
+- Financial-action V1 is single-author labeled and has not received independent adjudication.
 - The twenty-two workflow scenarios form a safety smoke suite, not a formal verification.
 - No claim is made about real-world payment-recovery uplift.
 - Automated workflow tests use SQLite; PostgreSQL row locking has been exercised manually but not under concurrent load testing.

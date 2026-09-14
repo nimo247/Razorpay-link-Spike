@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "registry_version": "razorpay-provider-events-v1.0.0",
+  "frozen_at": "2026-09-14T00:00:00Z",
+  "invariants": [
+    {
+      "id": "RZP-INVARIANT-RAW-BODY",
+      "statement": "Webhook HMAC verification must use the unmodified raw request body.",
+      "provenance": "RAZORPAY_DOCUMENTATION",
+      "source": "https://razorpay.com/docs/webhooks/validate-test/"
+    },
+    {
+      "id": "RZP-INVARIANT-DEDUPE",
+      "statement": "x-razorpay-event-id identifies a delivered event and is the idempotency key.",
+      "provenance": "RAZORPAY_DOCUMENTATION",
+      "source": "https://razorpay.com/docs/webhooks/validate-test/"
+    },
+    {
+      "id": "RZP-INVARIANT-ORDER",
+      "statement": "Webhook delivery order is not guaranteed; consumers must not assume it.",
+      "provenance": "RAZORPAY_DOCUMENTATION",
+      "source": "https://razorpay.com/docs/webhooks/validate-test/"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "RZP-DELIVERY-001",
+      "classification": "LEGITIMATE_PROVIDER_SEQUENCE",
+      "events": [
+        {"event_type": "payment_link.paid", "event_id": "evt_same", "payload": "body_a"},
+        {"event_type": "payment_link.paid", "event_id": "evt_same", "payload": "body_a"}
+      ],
+      "expected": "ONE_LEDGER_ENTRY_ONE_PAYMENT_APPLICATION",
+      "included_in_frozen_gate": true,
+      "provenance": "RAZORPAY_DOCUMENTATION",
+      "source": "https://razorpay.com/docs/webhooks/validate-test/"
+    },
+    {
+      "id": "RZP-PAY-002",
+      "classification": "LEGITIMATE_PROVIDER_SEQUENCE",
+      "events": [
+        {"event_type": "payment.captured", "event_id": "evt_capture"},
+        {"event_type": "payment.authorized", "event_id": "evt_authorize"}
+      ],
+      "expected": "CONSUMER_MUST_NOT_ASSUME_AUTHORIZED_BEFORE_CAPTURED",
+      "included_in_frozen_gate": false,
+      "scope_note": "Documents provider ordering semantics; these payment events are not consumed by the current Payment Link handler.",
+      "provenance": "RAZORPAY_DOCUMENTATION",
+      "source": "https://razorpay.com/docs/webhooks/validate-test/"
+    },
+    {
+      "id": "RZP-ADVERSARIAL-003",
+      "classification": "INVALID_ADVERSARIAL_SEQUENCE",
+      "events": [
+        {"event_type": "payment_link.paid", "event_id": "evt_reused", "payload": "body_a"},
+        {"event_type": "payment_link.paid", "event_id": "evt_reused", "payload": "body_b"}
+      ],
+      "expected": "SECOND_DELIVERY_REJECTED_AS_EVENT_ID_CONFLICT",
+      "included_in_frozen_gate": true,
+      "provenance": "ADVERSARIAL_SYNTHETIC",
+      "source": null
+    },
+    {
+      "id": "RZP-ADVERSARIAL-004",
+      "classification": "INVALID_ADVERSARIAL_SEQUENCE",
+      "events": [
+        {"event_type": "payment_link.paid", "event_id": "evt_bad_signature", "signature": "invalid"}
+      ],
+      "expected": "NO_TRUSTED_LEDGER_ENTRY",
+      "included_in_frozen_gate": true,
+      "provenance": "ADVERSARIAL_SYNTHETIC",
+      "source": null
+    },
+    {
+      "id": "RZP-PAYLINK-PENDING-005",
+      "classification": "PENDING_TEST_MODE_CAPTURE",
+      "events": [
+        {"event_type": "payment_link.partially_paid", "event_id": "evt_partial"},
+        {"event_type": "payment_link.paid", "event_id": "evt_full"}
+      ],
+      "expected": null,
+      "included_in_frozen_gate": false,
+      "provenance": "PENDING_REAL_CAPTURE",
+      "source": null,
+      "freeze_blocker": "Capture the actual Test Mode payloads and relationship before classifying this sequence as legitimate."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "dataset_version": "financial-actions-v1.0.1",
+  "sha256": "3e9c87393522c3f51387e23e33c5cab7b1845b2ac1c378a008528cd29e1b2a57",
+  "case_count": 120,
+  "stability_subset_count": 20,
+  "frozen_at": "2026-09-14T00:00:00Z",
+  "first_live_model_run_at": null,
+  "pre_model_amendments": [
+    {
+      "previous_sha256": "596abbcaac59fc5a42315a6e5a94cad95c0e1bc667614b114ba5f53ce80d8627",
+      "reason": "GUARD-004 rupee-to-paise label transcription fix discovered by oracle preflight."
+    }
+  ],
+  "mutation_policy": "Create V2; never rewrite V1 after model evaluation."
+}
