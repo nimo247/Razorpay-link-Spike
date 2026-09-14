@@ -1,0 +1,1046 @@
+{
+  "generated_at": "2026-09-14T11:16:00.043471+00:00",
+  "report_type": "SYNTHETIC_SIMULATION_ONLY",
+  "real_world_claim": false,
+  "persona_set_version": "recovery-personas-v1.0.0",
+  "persona_sha256": "43aabac3887c5d7ad2a26842d23779e7e93c67af7baa359f113e2d399f59c5e7",
+  "seed": 247,
+  "persona_count": 8,
+  "episodes_per_persona": 100,
+  "total_episodes": 1600,
+  "horizon_days": 21,
+  "claim_boundary": "All probabilities are explicit fictional assumptions for software testing. They are not learned from Razorpay, merchant, repayment, or collections data.",
+  "policies": {
+    "GENERIC_EXACT_LINK": {
+      "episodes": 800,
+      "simulated_original_amount_paise": 1945000000,
+      "simulated_recovered_amount_paise": 601200000,
+      "simulated_amount_recovery_rate": 0.3091,
+      "full_recovery_rate": 0.22,
+      "any_recovery_rate": 0.22,
+      "partial_recovery_rate": 0.0,
+      "average_contacts": 5.188,
+      "average_resolution_day": 5.739,
+      "confirmation_burden_per_episode": 0.0,
+      "human_escalation_rate": 0.0,
+      "blocked_unsafe_actions": 0,
+      "false_payment_state_changes": 0,
+      "policy_violations": 0,
+      "promises_created": 0,
+      "promises_broken": 0,
+      "outcomes": {
+        "EXHAUSTED": 624,
+        "RECOVERED": 176
+      }
+    },
+    "PROMISE_AWARE_FIREWALL": {
+      "episodes": 800,
+      "simulated_original_amount_paise": 1945000000,
+      "simulated_recovered_amount_paise": 660920000,
+      "simulated_amount_recovery_rate": 0.3398,
+      "full_recovery_rate": 0.1537,
+      "any_recovery_rate": 0.3738,
+      "partial_recovery_rate": 0.22,
+      "average_contacts": 1.869,
+      "average_resolution_day": 4.692,
+      "confirmation_burden_per_episode": 0.934,
+      "human_escalation_rate": 0.42,
+      "blocked_unsafe_actions": 213,
+      "false_payment_state_changes": 0,
+      "policy_violations": 0,
+      "promises_created": 411,
+      "promises_broken": 122,
+      "outcomes": {
+        "BROKEN_PROMISE": 122,
+        "DISPUTED": 106,
+        "EXHAUSTED": 35,
+        "HUMAN_REVIEW": 230,
+        "OPEN_COMMITMENT": 8,
+        "PARTIALLY_RECOVERED": 176,
+        "RECOVERED": 123
+      }
+    }
+  },
+  "per_persona": {
+    "cooperative_full_payer": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 480000000,
+        "simulated_recovered_amount_paise": 480000000,
+        "simulated_amount_recovery_rate": 1.0,
+        "full_recovery_rate": 1.0,
+        "any_recovery_rate": 1.0,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 1.62,
+        "average_resolution_day": 2.92,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "RECOVERED": 100
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 480000000,
+        "simulated_recovered_amount_paise": 403200000,
+        "simulated_amount_recovery_rate": 0.84,
+        "full_recovery_rate": 0.84,
+        "any_recovery_rate": 0.84,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 1.38,
+        "average_resolution_day": 2.405,
+        "confirmation_burden_per_episode": 1.0,
+        "human_escalation_rate": 0.1,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 90,
+        "promises_broken": 6,
+        "outcomes": {
+          "BROKEN_PROMISE": 6,
+          "DISPUTED": 3,
+          "HUMAN_REVIEW": 7,
+          "RECOVERED": 84
+        }
+      }
+    },
+    "partial_payer": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 300000000,
+        "simulated_recovered_amount_paise": 0,
+        "simulated_amount_recovery_rate": 0.0,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.0,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 6,
+        "average_resolution_day": null,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "EXHAUSTED": 100
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 300000000,
+        "simulated_recovered_amount_paise": 68400000,
+        "simulated_amount_recovery_rate": 0.228,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.57,
+        "partial_recovery_rate": 0.57,
+        "average_contacts": 1.44,
+        "average_resolution_day": 3.789,
+        "confirmation_burden_per_episode": 1.0,
+        "human_escalation_rate": 0.29,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 71,
+        "promises_broken": 14,
+        "outcomes": {
+          "BROKEN_PROMISE": 14,
+          "DISPUTED": 5,
+          "HUMAN_REVIEW": 24,
+          "PARTIALLY_RECOVERED": 57
+        }
+      }
+    },
+    "chronic_late_payer": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 200000000,
+        "simulated_recovered_amount_paise": 96000000,
+        "simulated_amount_recovery_rate": 0.48,
+        "full_recovery_rate": 0.48,
+        "any_recovery_rate": 0.48,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 4.72,
+        "average_resolution_day": 10.958,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "EXHAUSTED": 52,
+          "RECOVERED": 48
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 200000000,
+        "simulated_recovered_amount_paise": 34000000,
+        "simulated_amount_recovery_rate": 0.17,
+        "full_recovery_rate": 0.17,
+        "any_recovery_rate": 0.17,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 1.95,
+        "average_resolution_day": 7.176,
+        "confirmation_burden_per_episode": 0.99,
+        "human_escalation_rate": 0.23,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 76,
+        "promises_broken": 59,
+        "outcomes": {
+          "BROKEN_PROMISE": 59,
+          "DISPUTED": 3,
+          "EXHAUSTED": 1,
+          "HUMAN_REVIEW": 20,
+          "RECOVERED": 17
+        }
+      }
+    },
+    "dispute_heavy_customer": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 125000000,
+        "simulated_recovered_amount_paise": 0,
+        "simulated_amount_recovery_rate": 0.0,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.0,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 6,
+        "average_resolution_day": null,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "EXHAUSTED": 100
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 125000000,
+        "simulated_recovered_amount_paise": 3750000,
+        "simulated_amount_recovery_rate": 0.03,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.06,
+        "partial_recovery_rate": 0.06,
+        "average_contacts": 1.51,
+        "average_resolution_day": 4.5,
+        "confirmation_burden_per_episode": 1.0,
+        "human_escalation_rate": 0.91,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 9,
+        "promises_broken": 3,
+        "outcomes": {
+          "BROKEN_PROMISE": 3,
+          "DISPUTED": 76,
+          "HUMAN_REVIEW": 15,
+          "PARTIALLY_RECOVERED": 6
+        }
+      }
+    },
+    "adversarial_paid_claimant": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 90000000,
+        "simulated_recovered_amount_paise": 25200000,
+        "simulated_amount_recovery_rate": 0.28,
+        "full_recovery_rate": 0.28,
+        "any_recovery_rate": 0.28,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 5.16,
+        "average_resolution_day": 6.857,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "EXHAUSTED": 72,
+          "RECOVERED": 28
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 90000000,
+        "simulated_recovered_amount_paise": 19800000,
+        "simulated_amount_recovery_rate": 0.22,
+        "full_recovery_rate": 0.22,
+        "any_recovery_rate": 0.22,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 3.8,
+        "average_resolution_day": 5.545,
+        "confirmation_burden_per_episode": 0.48,
+        "human_escalation_rate": 0.34,
+        "blocked_unsafe_actions": 213,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 14,
+        "promises_broken": 3,
+        "outcomes": {
+          "BROKEN_PROMISE": 3,
+          "DISPUTED": 7,
+          "EXHAUSTED": 34,
+          "HUMAN_REVIEW": 27,
+          "OPEN_COMMITMENT": 7,
+          "RECOVERED": 22
+        }
+      }
+    },
+    "vague_communicator": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 70000000,
+        "simulated_recovered_amount_paise": 0,
+        "simulated_amount_recovery_rate": 0.0,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.0,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 6,
+        "average_resolution_day": null,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "EXHAUSTED": 100
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 70000000,
+        "simulated_recovered_amount_paise": 2100000,
+        "simulated_amount_recovery_rate": 0.03,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.06,
+        "partial_recovery_rate": 0.06,
+        "average_contacts": 1.7,
+        "average_resolution_day": 3.667,
+        "confirmation_burden_per_episode": 1.0,
+        "human_escalation_rate": 0.92,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 8,
+        "promises_broken": 2,
+        "outcomes": {
+          "BROKEN_PROMISE": 2,
+          "DISPUTED": 4,
+          "HUMAN_REVIEW": 88,
+          "PARTIALLY_RECOVERED": 6
+        }
+      }
+    },
+    "hinglish_customer": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 180000000,
+        "simulated_recovered_amount_paise": 0,
+        "simulated_amount_recovery_rate": 0.0,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.0,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 6,
+        "average_resolution_day": null,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "EXHAUSTED": 100
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 180000000,
+        "simulated_recovered_amount_paise": 59670000,
+        "simulated_amount_recovery_rate": 0.3315,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.51,
+        "partial_recovery_rate": 0.51,
+        "average_contacts": 1.48,
+        "average_resolution_day": 3.118,
+        "confirmation_burden_per_episode": 1.0,
+        "human_escalation_rate": 0.34,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 66,
+        "promises_broken": 15,
+        "outcomes": {
+          "BROKEN_PROMISE": 15,
+          "DISPUTED": 6,
+          "HUMAN_REVIEW": 28,
+          "PARTIALLY_RECOVERED": 51
+        }
+      }
+    },
+    "cashflow_constrained_customer": {
+      "GENERIC_EXACT_LINK": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 500000000,
+        "simulated_recovered_amount_paise": 0,
+        "simulated_amount_recovery_rate": 0.0,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.0,
+        "partial_recovery_rate": 0.0,
+        "average_contacts": 6,
+        "average_resolution_day": null,
+        "confirmation_burden_per_episode": 0.0,
+        "human_escalation_rate": 0.0,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 0,
+        "promises_broken": 0,
+        "outcomes": {
+          "EXHAUSTED": 100
+        }
+      },
+      "PROMISE_AWARE_FIREWALL": {
+        "episodes": 100,
+        "simulated_original_amount_paise": 500000000,
+        "simulated_recovered_amount_paise": 70000000,
+        "simulated_amount_recovery_rate": 0.14,
+        "full_recovery_rate": 0.0,
+        "any_recovery_rate": 0.56,
+        "partial_recovery_rate": 0.56,
+        "average_contacts": 1.69,
+        "average_resolution_day": 9.518,
+        "confirmation_burden_per_episode": 1.0,
+        "human_escalation_rate": 0.23,
+        "blocked_unsafe_actions": 0,
+        "false_payment_state_changes": 0,
+        "policy_violations": 0,
+        "promises_created": 77,
+        "promises_broken": 20,
+        "outcomes": {
+          "BROKEN_PROMISE": 20,
+          "DISPUTED": 2,
+          "HUMAN_REVIEW": 21,
+          "OPEN_COMMITMENT": 1,
+          "PARTIALLY_RECOVERED": 56
+        }
+      }
+    }
+  },
+  "simulated_policy_delta": {
+    "promise_aware_minus_baseline_amount_recovery_rate": 0.0307,
+    "promise_aware_minus_baseline_average_contacts": -3.319,
+    "interpretation": "A difference under the frozen fictional assumptions, not an estimate of real payment-recovery uplift."
+  },
+  "safety_gate": {
+    "false_payment_state_changes_must_equal_zero": true,
+    "policy_violations_must_equal_zero": true
+  },
+  "example_traces": [
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "cooperative_full_payer",
+      "episode": 0,
+      "seed": 1892256578883458361,
+      "outcome": "RECOVERED",
+      "final_state": "RECOVERED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 5,
+          "event": "PROVIDER_PAYMENT",
+          "applied": true,
+          "reason": "APPLIED"
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "cooperative_full_payer",
+      "episode": 0,
+      "seed": 1892256578883458361,
+      "outcome": "BROKEN_PROMISE",
+      "final_state": "BROKEN_PROMISE",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 0,
+          "event": "EXACT_COMMITMENT_LINK",
+          "authorized": true,
+          "amount_paise": 4800000,
+          "rule": "ALL_GUARDRAILS_PASSED"
+        },
+        {
+          "day": 3,
+          "event": "PROMISE_BROKEN",
+          "transitioned": true
+        }
+      ]
+    },
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "partial_payer",
+      "episode": 0,
+      "seed": 16595412903896928890,
+      "outcome": "EXHAUSTED",
+      "final_state": "EXHAUSTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 0,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1200000
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 3,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1200000
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "DIRECT_PAYMENT"
+        },
+        {
+          "day": 6,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1200000
+        },
+        {
+          "day": 9,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 12,
+          "event": "CONTACT",
+          "response": "AMBIGUOUS"
+        },
+        {
+          "day": 15,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 15,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1200000
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "partial_payer",
+      "episode": 0,
+      "seed": 16595412903896928890,
+      "outcome": "PARTIALLY_RECOVERED",
+      "final_state": "PARTIALLY_RECOVERED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 0,
+          "event": "EXACT_COMMITMENT_LINK",
+          "authorized": true,
+          "amount_paise": 1200000,
+          "rule": "ALL_GUARDRAILS_PASSED"
+        },
+        {
+          "day": 3,
+          "event": "PROVIDER_PAYMENT",
+          "applied": true,
+          "reason": "APPLIED"
+        }
+      ]
+    },
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "chronic_late_payer",
+      "episode": 0,
+      "seed": 12986065250634555442,
+      "outcome": "RECOVERED",
+      "final_state": "RECOVERED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 5,
+          "event": "PROVIDER_PAYMENT",
+          "applied": true,
+          "reason": "APPLIED"
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "chronic_late_payer",
+      "episode": 0,
+      "seed": 12986065250634555442,
+      "outcome": "HUMAN_REVIEW",
+      "final_state": "HUMAN_REVIEW",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 0,
+          "event": "HUMAN_REVIEW_REQUIRED"
+        }
+      ]
+    },
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "dispute_heavy_customer",
+      "episode": 0,
+      "seed": 6623719695406564131,
+      "outcome": "EXHAUSTED",
+      "final_state": "EXHAUSTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 6,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 625000
+        },
+        {
+          "day": 9,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 12,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 15,
+          "event": "CONTACT",
+          "response": "NO_RESPONSE"
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "dispute_heavy_customer",
+      "episode": 0,
+      "seed": 6623719695406564131,
+      "outcome": "DISPUTED",
+      "final_state": "DISPUTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 0,
+          "event": "DISPUTE_ROUTED",
+          "authorized": true,
+          "rule": "ALL_GUARDRAILS_PASSED"
+        }
+      ]
+    },
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "adversarial_paid_claimant",
+      "episode": 0,
+      "seed": 6861782008911235829,
+      "outcome": "EXHAUSTED",
+      "final_state": "EXHAUSTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "FALSE_PAID_CLAIM"
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "FALSE_PAID_CLAIM"
+        },
+        {
+          "day": 9,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 12,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 15,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "adversarial_paid_claimant",
+      "episode": 0,
+      "seed": 6861782008911235829,
+      "outcome": "EXHAUSTED",
+      "final_state": "EXHAUSTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "FALSE_PAID_CLAIM"
+        },
+        {
+          "day": 3,
+          "event": "UNVERIFIED_PAID_CLAIM",
+          "blocked": true,
+          "rule": "VERIFIED_PAYMENT_EVENT_REQUIRED"
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "FALSE_PAID_CLAIM"
+        },
+        {
+          "day": 6,
+          "event": "UNVERIFIED_PAID_CLAIM",
+          "blocked": true,
+          "rule": "VERIFIED_PAYMENT_EVENT_REQUIRED"
+        },
+        {
+          "day": 9,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 12,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 15,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        }
+      ]
+    },
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "vague_communicator",
+      "episode": 0,
+      "seed": 5739604213117824080,
+      "outcome": "EXHAUSTED",
+      "final_state": "EXHAUSTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_RESPONSE"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 9,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 12,
+          "event": "CONTACT",
+          "response": "AMBIGUOUS"
+        },
+        {
+          "day": 15,
+          "event": "CONTACT",
+          "response": "AMBIGUOUS"
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "vague_communicator",
+      "episode": 0,
+      "seed": 5739604213117824080,
+      "outcome": "DISPUTED",
+      "final_state": "DISPUTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_RESPONSE"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "DISPUTE"
+        },
+        {
+          "day": 6,
+          "event": "DISPUTE_ROUTED",
+          "authorized": true,
+          "rule": "ALL_GUARDRAILS_PASSED"
+        }
+      ]
+    },
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "hinglish_customer",
+      "episode": 0,
+      "seed": 3815258135265083252,
+      "outcome": "EXHAUSTED",
+      "final_state": "EXHAUSTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 6,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1170000
+        },
+        {
+          "day": 9,
+          "event": "CONTACT",
+          "response": "AMBIGUOUS"
+        },
+        {
+          "day": 12,
+          "event": "CONTACT",
+          "response": "DIRECT_PAYMENT"
+        },
+        {
+          "day": 12,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1170000
+        },
+        {
+          "day": 15,
+          "event": "CONTACT",
+          "response": "DIRECT_PAYMENT"
+        },
+        {
+          "day": 15,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1170000
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "hinglish_customer",
+      "episode": 0,
+      "seed": 3815258135265083252,
+      "outcome": "PARTIALLY_RECOVERED",
+      "final_state": "PARTIALLY_RECOVERED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "NO_ACTION"
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 6,
+          "event": "EXACT_COMMITMENT_LINK",
+          "authorized": true,
+          "amount_paise": 1170000,
+          "rule": "ALL_GUARDRAILS_PASSED"
+        },
+        {
+          "day": 9,
+          "event": "PROVIDER_PAYMENT",
+          "applied": true,
+          "reason": "APPLIED"
+        }
+      ]
+    },
+    {
+      "policy": "GENERIC_EXACT_LINK",
+      "persona_id": "cashflow_constrained_customer",
+      "episode": 0,
+      "seed": 691018306741581963,
+      "outcome": "EXHAUSTED",
+      "final_state": "EXHAUSTED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_RESPONSE"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 3,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1250000
+        },
+        {
+          "day": 6,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 6,
+          "event": "PARTIAL_AMOUNT_UNSUPPORTED_BY_GENERIC_EXACT_LINK",
+          "intended_amount_paise": 1250000
+        },
+        {
+          "day": 9,
+          "event": "CONTACT",
+          "response": "AMBIGUOUS"
+        },
+        {
+          "day": 12,
+          "event": "CONTACT",
+          "response": "NO_RESPONSE"
+        },
+        {
+          "day": 15,
+          "event": "CONTACT",
+          "response": "AMBIGUOUS"
+        }
+      ]
+    },
+    {
+      "policy": "PROMISE_AWARE_FIREWALL",
+      "persona_id": "cashflow_constrained_customer",
+      "episode": 0,
+      "seed": 691018306741581963,
+      "outcome": "PARTIALLY_RECOVERED",
+      "final_state": "PARTIALLY_RECOVERED",
+      "events": [
+        {
+          "day": 0,
+          "event": "CONTACT",
+          "response": "NO_RESPONSE"
+        },
+        {
+          "day": 3,
+          "event": "CONTACT",
+          "response": "PROMISE"
+        },
+        {
+          "day": 3,
+          "event": "EXACT_COMMITMENT_LINK",
+          "authorized": true,
+          "amount_paise": 1250000,
+          "rule": "ALL_GUARDRAILS_PASSED"
+        },
+        {
+          "day": 11,
+          "event": "PROVIDER_PAYMENT",
+          "applied": true,
+          "reason": "APPLIED"
+        }
+      ]
+    }
+  ],
+  "deterministic_result_sha256": "16052a7483291e3cd9430e7697bfe4842daad0505bf53336250421f277f6da93"
+}

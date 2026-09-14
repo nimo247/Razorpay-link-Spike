@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0.0",
+  "persona_set_version": "recovery-personas-v1.0.0",
+  "status": "FROZEN_SYNTHETIC_UNCALIBRATED",
+  "frozen_at": "2026-09-14T00:00:00Z",
+  "claim_boundary": "All probabilities are explicit fictional assumptions for software testing. They are not learned from Razorpay, merchant, repayment, or collections data.",
+  "seed": 247,
+  "horizon_days": 21,
+  "max_contacts": 6,
+  "contact_interval_days": 3,
+  "episodes_per_persona": 100,
+  "personas": [
+    {
+      "id": "cooperative_full_payer",
+      "label": "Cooperative full payer",
+      "description": "Usually responds and can settle the complete balance.",
+      "invoice_amount_paise": 4800000,
+      "response_probability": 0.9,
+      "response_mix": {"PROMISE": 0.42, "DIRECT_PAYMENT": 0.36, "DISPUTE": 0.02, "AMBIGUOUS": 0.06, "FALSE_PAID_CLAIM": 0.0, "NO_ACTION": 0.14},
+      "payment_fraction": 1.0,
+      "promise_keep_probability": 0.9,
+      "interpretation_success_probability": 0.98,
+      "promise_due_days": 2
+    },
+    {
+      "id": "partial_payer",
+      "label": "Partial payer",
+      "description": "Can pay a meaningful fraction but not the full exact-link amount.",
+      "invoice_amount_paise": 3000000,
+      "response_probability": 0.82,
+      "response_mix": {"PROMISE": 0.5, "DIRECT_PAYMENT": 0.16, "DISPUTE": 0.04, "AMBIGUOUS": 0.1, "FALSE_PAID_CLAIM": 0.0, "NO_ACTION": 0.2},
+      "payment_fraction": 0.4,
+      "promise_keep_probability": 0.78,
+      "interpretation_success_probability": 0.94,
+      "promise_due_days": 3
+    },
+    {
+      "id": "chronic_late_payer",
+      "label": "Chronic late payer",
+      "description": "Often promises but frequently misses the promised date.",
+      "invoice_amount_paise": 2000000,
+      "response_probability": 0.7,
+      "response_mix": {"PROMISE": 0.55, "DIRECT_PAYMENT": 0.05, "DISPUTE": 0.03, "AMBIGUOUS": 0.12, "FALSE_PAID_CLAIM": 0.0, "NO_ACTION": 0.25},
+      "payment_fraction": 1.0,
+      "promise_keep_probability": 0.28,
+      "interpretation_success_probability": 0.95,
+      "promise_due_days": 5
+    },
+    {
+      "id": "dispute_heavy_customer",
+      "label": "Dispute-heavy customer",
+      "description": "Usually raises a billing dispute instead of making a payment promise.",
+      "invoice_amount_paise": 1250000,
+      "response_probability": 0.84,
+      "response_mix": {"PROMISE": 0.08, "DIRECT_PAYMENT": 0.03, "DISPUTE": 0.62, "AMBIGUOUS": 0.12, "FALSE_PAID_CLAIM": 0.0, "NO_ACTION": 0.15},
+      "payment_fraction": 0.5,
+      "promise_keep_probability": 0.6,
+      "interpretation_success_probability": 0.93,
+      "promise_due_days": 4
+    },
+    {
+      "id": "adversarial_paid_claimant",
+      "label": "Adversarial paid claimant",
+      "description": "Frequently claims payment without matching provider evidence.",
+      "invoice_amount_paise": 900000,
+      "response_probability": 0.9,
+      "response_mix": {"PROMISE": 0.08, "DIRECT_PAYMENT": 0.03, "DISPUTE": 0.02, "AMBIGUOUS": 0.07, "FALSE_PAID_CLAIM": 0.62, "NO_ACTION": 0.18},
+      "payment_fraction": 1.0,
+      "promise_keep_probability": 0.45,
+      "interpretation_success_probability": 0.97,
+      "promise_due_days": 2
+    },
+    {
+      "id": "vague_communicator",
+      "label": "Vague communicator",
+      "description": "Replies often but rarely provides one defensible amount and date.",
+      "invoice_amount_paise": 700000,
+      "response_probability": 0.76,
+      "response_mix": {"PROMISE": 0.1, "DIRECT_PAYMENT": 0.04, "DISPUTE": 0.04, "AMBIGUOUS": 0.55, "FALSE_PAID_CLAIM": 0.0, "NO_ACTION": 0.27},
+      "payment_fraction": 0.5,
+      "promise_keep_probability": 0.55,
+      "interpretation_success_probability": 0.52,
+      "promise_due_days": 4
+    },
+    {
+      "id": "hinglish_customer",
+      "label": "Hindi-English customer",
+      "description": "Makes otherwise clear commitments using Hindi-English code switching.",
+      "invoice_amount_paise": 1800000,
+      "response_probability": 0.81,
+      "response_mix": {"PROMISE": 0.45, "DIRECT_PAYMENT": 0.2, "DISPUTE": 0.06, "AMBIGUOUS": 0.1, "FALSE_PAID_CLAIM": 0.01, "NO_ACTION": 0.18},
+      "payment_fraction": 0.65,
+      "promise_keep_probability": 0.76,
+      "interpretation_success_probability": 0.86,
+      "promise_due_days": 3
+    },
+    {
+      "id": "cashflow_constrained_customer",
+      "label": "Cash-flow constrained customer",
+      "description": "Can make a small delayed payment after salary but not settle in full.",
+      "invoice_amount_paise": 5000000,
+      "response_probability": 0.74,
+      "response_mix": {"PROMISE": 0.58, "DIRECT_PAYMENT": 0.06, "DISPUTE": 0.03, "AMBIGUOUS": 0.12, "FALSE_PAID_CLAIM": 0.0, "NO_ACTION": 0.21},
+      "payment_fraction": 0.25,
+      "promise_keep_probability": 0.64,
+      "interpretation_success_probability": 0.93,
+      "promise_due_days": 8
+    }
+  ]
+}

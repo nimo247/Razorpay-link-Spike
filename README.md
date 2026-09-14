@@ -189,6 +189,7 @@ Repeated execution is idempotent, and completed payments cannot be marked broken
 - Frozen workflow-safety scenarios
 - Versioned 120-case financial-action decision set
 - Cached order-equivalence and live-model stability harnesses
+- Seeded eight-persona recovery-policy simulator
 
 ## Live integration evidence
 
@@ -228,6 +229,11 @@ frontend/
 │   └── types.ts
 └── vite.config.ts
 
+simulator/
+├── engine.py
+├── personas_v1.json
+└── personas_v1.lock.json
+
 evals/
 ├── financial_action_cases_v1.json
 ├── financial_action_cases_v1.lock.json
@@ -242,6 +248,7 @@ scripts/
 ├── evaluate_financial_actions.py
 ├── evaluate_promise_extraction.py
 ├── evaluate_workflow_safety.py
+├── run_recovery_simulator.py
 └── seed_demo_invoice.py
 
 tests/
@@ -390,7 +397,7 @@ python -m pytest -q
 Latest verified result:
 
 ```text
-65 passed
+73 passed
 ```
 
 The remaining warning concerns a TestClient dependency deprecation and does not represent a failed test.
@@ -455,6 +462,24 @@ the preselected 20-case subset at proposal, evidence, and final-decision level.
 See [docs/EVALUATION_PROTOCOL.md](docs/EVALUATION_PROTOCOL.md) for target
 definitions, label history, commands, and claim boundaries.
 
+### Recovery Simulator V1
+
+The simulator compares generic full-balance exact-link reminders with the
+promise-aware Firewall policy across exactly eight frozen synthetic personas.
+
+```bash
+python scripts/run_recovery_simulator.py
+```
+
+The committed run uses 100 episodes per persona per policy (1,600 total) and
+replays the full run to verify its deterministic result hash. It reports
+simulated recovery, contacts, confirmations, escalations, blocked unsupported
+payment claims, policy violations, and false payment-state changes.
+
+These are **fictional, uncalibrated simulations—not observed recovery rates or
+expected merchant uplift**. See [docs/SIMULATOR_DESIGN.md](docs/SIMULATOR_DESIGN.md)
+and [docs/RECOVERY_SIMULATION_REPORT.md](docs/RECOVERY_SIMULATION_REPORT.md).
+
 ### Frozen workflow-safety evaluation
 
 ```bash
@@ -492,6 +517,7 @@ Evaluated controls include:
 - Customer messages are entered through the dashboard; WhatsApp or SMS ingestion is not implemented.
 - The legacy extraction result contains ten live smoke cases. The new 120-case decision set is frozen but has not yet been run against the live model, so the oracle preflight is not evidence of model accuracy.
 - Financial-action V1 is single-author labeled and has not received independent adjudication.
+- Recovery Simulator V1 uses eight fictional personas with uncalibrated probabilities; its policy comparison is not evidence of real-world uplift.
 - The twenty-two workflow scenarios form a safety smoke suite, not a formal verification.
 - No claim is made about real-world payment-recovery uplift.
 - Automated workflow tests use SQLite; PostgreSQL row locking has been exercised manually but not under concurrent load testing.

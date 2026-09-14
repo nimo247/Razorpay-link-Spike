@@ -1,0 +1,8 @@
+{
+  "persona_set_version": "recovery-personas-v1.0.0",
+  "sha256": "43aabac3887c5d7ad2a26842d23779e7e93c67af7baa359f113e2d399f59c5e7",
+  "persona_count": 8,
+  "frozen_at": "2026-09-14T00:00:00Z",
+  "calibration": "NONE_SYNTHETIC_ONLY",
+  "mutation_policy": "Create V2; do not add a ninth persona or tune V1 after viewing comparative results."
+}
